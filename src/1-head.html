@@ -270,6 +270,13 @@ button, input { font: inherit; color: inherit; }
 .pourfx.batter { fill: #e9cf93; }
 .pourfx.oil { fill: #e8c95a; }
 .pourfx.broth { fill: #d9a441; }
+.pourfx.kibble { fill: #8a5a34; }
+.cat-z { font: 700 7px var(--ui); fill: #8a94a0; transform-box: fill-box; animation: catZ 2.8s ease-in-out infinite; }
+@keyframes catZ { 0% { opacity: 0; transform: translate(0, 0); } 30% { opacity: 0.9; } 100% { opacity: 0; transform: translate(4px, -10px); } }
+.cat-say { font: 700 9px var(--ui); fill: #fff; paint-order: stroke; stroke: rgba(30, 32, 36, 0.85); stroke-width: 3px; text-anchor: middle; transform-box: fill-box; animation: catSay 1.5s ease-out forwards; }
+@keyframes catSay { 0% { opacity: 0; transform: translateY(4px); } 15% { opacity: 1; transform: none; } 75% { opacity: 1; } 100% { opacity: 0; transform: translateY(-4px); } }
+.cat-purr path { animation: purr 0.18s ease-in-out infinite alternate; }
+@keyframes purr { from { opacity: 0.35; } to { opacity: 0.9; } }
 
 /* light + night */
 #nightShade { fill: #0a1226; transition: opacity 1.2s ease; pointer-events: none; }

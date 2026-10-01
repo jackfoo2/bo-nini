@@ -165,6 +165,7 @@ function frame(t) {
   renderFace(t, dt, amt);
   if (bo.welding) updateWeld();
   kitchenTick(dt);
+  catTick(dt);
   // things that move in the room
   if (apt.leak && !document.hidden) { dripT -= dt; if (dripT <= 0) { spawnDrip(); dripT = rand(0.7, 1.15); } }
   if (apt.radio && !RM.matches) { noteT -= dt; if (noteT <= 0) { spawnNote(); noteT = rand(1.1, 1.9); } }
@@ -520,6 +521,8 @@ function needs() {
   if (apt.mail > 0) list.push([actGetMail, 2 + apt.mail * 0.6]);
   if (apt.plant < 0.5) list.push([actWater, 4]); else if (apt.plant < 0.7) list.push([actWater, 1.5]);
   if (apt.dust.length) list.push([actSweep, 1.5 + apt.dust.length * 0.5]);
+  if (apt.knocked) list.push([actPickupFigurine, 4]);
+  if (apt.catBowl === 0 && Date.now() - (apt.catFedAt || 0) > 120000) list.push([actFeedCat, 3.5]);
   if (tod === 'morning' && !apt.blinds && canAuto('blinds')) list.push([(tok) => actBlinds(tok, true), 3]);
   if (tod === 'night' && apt.blinds && canAuto('blinds')) list.push([(tok) => actBlinds(tok, false), 1.2]);
   return list;
@@ -533,7 +536,7 @@ function chooseActivity() {
   if (n.length && Math.random() < { morning: 0.85, day: 0.72, evening: 0.55, night: 0.45 }[tod]) return weighted(n);
   return weighted([
     [actRead, late ? 5 : 3.5], [actTinker, late ? 1.5 : 3.5], [actWindow, 2], [actSit, late ? 2.5 : 1.2], [actInspect, 2.2],
-    [actPeekFridge, 0.8], [actInspectSpices, 0.6], [actWashUp, kit.serve ? 2 : 0.3],
+    [actPeekFridge, 0.8], [actInspectSpices, 0.6], [actWashUp, kit.serve ? 2 : 0.3], [actPetCat, 1.1], [actStudyCat, 0.9],
     [(tok) => actRadio(tok, !apt.radio), canAuto('radio') ? 1.2 : 0], [actWander, 1.5], [actRest, tod === 'night' ? 1.5 : 0.4], [actClock, 0.4],
   ]);
 }

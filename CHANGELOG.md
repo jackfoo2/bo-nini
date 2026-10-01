@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.5.0 (2026-09-30)
+
+- **A cat.** A ginger cat lives in the apartment with its own routine: naps on the armchair, in the sunbeam and on Bo's dock, sits in the window, bats at dust bunnies, and knocks things off the workbench. It hops on the kitchen island during cooking classes and gets shooed off.
+- **Bo looks after it.** Bo feeds it, pets it, studies it through the magnifier, and puts back whatever it knocks over. The cat is never your job: no hunger meter, no guilt.
+- **Name it.** Tell Bo the cat's name in chat and it goes on the board.
+
 ## v0.4.1 (2026-09-26)
 
 - **Hold to read.** Resting the mouse on something Bo says keeps it open and in place until you move off. On phones, tap it to hold it and tap anywhere else to let go.

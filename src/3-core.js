@@ -49,7 +49,7 @@ function freshApt() {
     mail: 2, dust: [{ x: 620 }], plant: 0.55, leak: true, bucket: 0.35, puddle: 0,
     lightFault: false, bulbDead: false, cracks: [0, 0, 1, 0, 0], tilt: -6,
     radio: false, lamp: false, ceiling: false, blinds: true, desk: false,
-    project: 0.3, figurines: 1, fixes: 0, notes: [],
+    project: 0.3, figurines: 1, fixes: 0, notes: [], catName: null, catBowl: 1, catFedAt: 0, knocked: false,
   };
 }
 let apt = freshApt();
@@ -152,6 +152,13 @@ function renderBucket() { const h = 23 * clamp(apt.bucket, 0, 1), w = $('#bucket
 function renderPuddle() { const p = $('#puddle'); p.setAttribute('rx', (apt.puddle * 66).toFixed(1)); p.setAttribute('ry', (apt.puddle * 7).toFixed(1)); }
 function renderProject() {
   const g = $('#project'); g.textContent = '';
+  if (apt.knocked) {
+    const f = el('g', { transform: 'translate(884 494) rotate(-84)' }, g);
+    el('rect', { class: 'c-figure', x: -7, y: -17, width: 14, height: 13, rx: 2 }, f);
+    el('rect', { class: 'c-figure', x: -7, y: -27, width: 14, height: 10, rx: 2 }, f);
+    el('rect', { fill: '#0e1215', x: -5, y: -25, width: 10, height: 6, rx: 1 }, f);
+    return;
+  }
   const p = apt.project, x = 866, y = 396;
   if (p > 0.02) el('rect', { class: 'c-figure', x: x - 12, y: y - 4, width: 24, height: 4, rx: 1 }, g);
   if (p > 0.25) el('rect', { class: 'c-figure', x: x - 7, y: y - 17, width: 14, height: 13, rx: 2 }, g);
@@ -245,6 +252,8 @@ function restoreApt(s) {
   a.figurines = clamp(a.figurines | 0, 0, 99); a.fixes = Math.max(0, a.fixes | 0); a.lessons = Math.max(0, a.lessons | 0);
   ['leak', 'lightFault', 'bulbDead', 'radio', 'lamp', 'ceiling', 'blinds'].forEach((k) => { a[k] = !!a[k]; });
   a.desk = false;
+  a.catName = typeof a.catName === 'string' && /^[A-Za-z][A-Za-z'-]{0,15}$/.test(a.catName) ? a.catName : null;
+  a.catBowl = a.catBowl ? 1 : 0; a.catFedAt = Number.isFinite(+a.catFedAt) ? +a.catFedAt : 0; a.knocked = !!a.knocked;
   a.notes = Array.isArray(a.notes) ? a.notes.filter((n) => n && typeof n.t === 'string' && n.t.length <= 90).slice(-24).map((n, i) => ({
     id: String(n.id || i).slice(0, 24), t: n.t, at: Number.isFinite(+n.at) ? +n.at : Date.now(), pinned: !!n.pinned, asked: Number.isFinite(+n.asked) ? +n.asked : 0, c: clamp(n.c | 0, 0, 5),
   })) : [];

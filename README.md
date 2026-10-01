@@ -14,6 +14,7 @@ This repo is an interactive **browser preview** of [Bo Nini](https://bonini.biz)
 - **Leave and come back.** Bo has a felt sense of time. The apartment ages while you're gone, and Bo reacts to how long it's been. The demo controls (the wrench in the taskbar) can simulate anything from 20 minutes to 3 weeks.
 - **Take a cooking class.** Three real recipes: chicken soup, fluffy pancakes, and spaghetti with tomato sauce. Hit **Cooking class** and Bo teaches it step by step, with the full recipe on a card.
 - **Watch the energy.** Energy is thinking. Each reply costs Bo a little, and its own chores are free. When the tank runs dry, Bo naps on its dock until you give it a snack. With your own AI key, thinking doesn't cost energy.
+- **Meet the cat.** A ginger cat lives here too. It naps on the armchair, in the sunbeam, and on Bo's dock, sits in the window, and knocks things off the workbench. Bo feeds it and puts things back. Click it to say hi, or tell Bo its name.
 - **Click things.** The leaky pipe, the lights, the radio, the fridge, the board, the window. Bo has a magnifying glass for close looks and a spyglass for the view.
 
 ![The whole apartment](docs/apartment.png)
@@ -54,11 +55,12 @@ The source is split into parts in `src/`. `build.sh` joins them back into `index
 | `src/4-bo.js` | Bo's body, animation, speech, and daily routine |
 | `src/5-kitchen.js` | The kitchen and the three cooking classes |
 | `src/6-memory-brain.js` | The corkboard memory and the bring-your-own-key brain |
-| `src/7-app.js` | Energy, felt time, chat, controls, and startup |
+| `src/7-cat.js` | The cat and Bo's cat chores |
+| `src/8-app.js` | Energy, felt time, chat, controls, and startup |
 
 ## Status
 
-v0.4.1, September 2026. An early preview: the art and behavior will keep changing.
+v0.5.0, September 2026. An early preview: the art and behavior will keep changing.
 
 ## License
 

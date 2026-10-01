@@ -99,6 +99,7 @@ function itemSVG(kind, cx, by) {
     case 'noodles': return `<g><rect x="${cx - 9}" y="${by - 12}" width="18" height="12" rx="2" fill="#f4efe2" stroke="#d9cfbd"/><path d="M${cx - 6} ${by - 6}q2-2 4 0t4 0t4 0" fill="none" stroke="#e8c85a" stroke-width="1.4"/></g>`;
     case 'herbs': return `<g><path d="M${cx - 6} ${by}l2-12M${cx} ${by}v-14M${cx + 6} ${by}l-2-12" stroke="#4f8a3a" stroke-width="1.6"/><circle cx="${cx - 4}" cy="${by - 11}" r="2.4" fill="#5f9a46"/><circle cx="${cx}" cy="${by - 14}" r="2.6" fill="#5f9a46"/><circle cx="${cx + 4}" cy="${by - 11}" r="2.4" fill="#5f9a46"/></g>`;
     case 'lemon': return `<path d="M${cx - 6} ${by}A6 6 0 0 1 ${cx + 6} ${by}Z" fill="#f2d33a" stroke="#d8b82a" stroke-width=".6"/>`;
+    case 'catfood': return `<g><path d="M${cx - 8} ${by}V${by - 18}L${cx - 6} ${by - 22}H${cx + 6}L${cx + 8} ${by - 18}V${by}Z" fill="#3f6fa8"/><rect x="${cx - 6}" y="${by - 14}" width="12" height="7" rx="1.5" fill="#f4efe2"/><path d="M${cx - 4} ${by - 10.5}q2-2.4 5 0q-3 2.4-5 0zM${cx + 1} ${by - 10.5}l2.4-1.6v3.2z" fill="#e07a2e"/></g>`;
     case 'pot': return potSVG(cx, by, kit.pot || { water: 0 });
     case 'board': return boardSVG(cx, by, kit.board);
     case 'pan': return panSVG(cx, by, kit.pan || { kind: 'fry' });
