@@ -1,0 +1,651 @@
+<body>
+<div class="desktop" id="desktop">
+  <div class="wallpaper" aria-hidden="true">
+    <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><path d="M-100 690C300 560 620 830 1010 650S1500 520 1800 600V1100H-100Z" fill="rgba(255,255,255,.045)"/><path d="M-100 820C420 700 720 910 1120 790S1520 700 1800 760V1100H-100Z" fill="rgba(0,0,0,.14)"/><circle cx="1280" cy="210" r="160" fill="rgba(255,214,150,.05)"/></svg>
+  </div>
+
+  <section class="appwin" id="appwin" aria-label="Bo Nini">
+    <header class="aw-bar" id="awBar">
+      <svg class="aw-icon" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="13" rx="3" fill="#454d55"/><rect x="4" y="5" width="12" height="8" rx="2" fill="#0e1215"/><rect x="6" y="7" width="2.6" height="4" rx="1" fill="#ffc54f"/><rect x="11.4" y="7" width="2.6" height="4" rx="1" fill="#ffc54f"/><rect x="12.5" y="0.5" width="1.2" height="3" fill="#2a3036"/></svg>
+      <span class="aw-title">Bo Nini</span>
+      <span class="aw-sub">Studio 2B</span>
+      <div class="aw-ctrls">
+        <button id="awMin" type="button" aria-label="Minimize"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 6.5h10" stroke="currentColor" stroke-width="1.4"/></svg></button>
+        <button id="awMax" type="button" aria-label="Maximize"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="1.5" y="1.5" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></button>
+        <button id="awClose" type="button" aria-label="Close"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.4"/></svg></button>
+      </div>
+    </header>
+
+    <div class="aw-stage" id="stage">
+      <svg id="world" viewBox="0 0 960 540" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Bo's studio apartment" data-tod="day" data-light="lit">
+        <defs>
+          <clipPath id="sinkClip"><rect x="-520" y="0" width="170" height="380"/></clipPath>
+          <pattern id="cork" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#c89c68"/><circle cx="3" cy="4" r="1" fill="#b1834f"/><circle cx="10" cy="9" r=".9" fill="#b1834f"/><circle cx="7" cy="12" r=".7" fill="#dcb483"/><circle cx="12" cy="2" r=".7" fill="#dcb483"/></pattern>
+          <pattern id="tiles" width="36" height="18" patternUnits="userSpaceOnUse"><rect width="36" height="18" fill="#dcd6c9"/><rect width="18" height="9" fill="#b9b2a2"/><rect x="18" y="9" width="18" height="9" fill="#b9b2a2"/></pattern>
+          <pattern id="subway" width="24" height="12" patternUnits="userSpaceOnUse"><rect width="24" height="12" fill="#ebe6da"/><path d="M0 .5H24M0 6.5H24M12 .5V6.5M.5 6.5V12M23.5 6.5V12" stroke="#d3cbba" stroke-width="1"/></pattern>
+          <pattern id="haz" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="bo-haz" width="3.5" height="7"/><rect class="bo-hazd" x="3.5" width="3.5" height="7"/></pattern>
+          <linearGradient id="skyMorning" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3c6d8"/><stop offset="1" stop-color="#f2cfa4"/></linearGradient>
+          <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#76a1c6"/><stop offset="1" stop-color="#d1e3ee"/></linearGradient>
+          <linearGradient id="skyEvening" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a365e"/><stop offset=".62" stop-color="#9b5e6d"/><stop offset="1" stop-color="#e79256"/></linearGradient>
+          <linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#060b1a"/><stop offset="1" stop-color="#1b2944"/></linearGradient>
+          <radialGradient id="haloGrad"><stop offset="0" stop-color="#ffe6a6" stop-opacity=".95"/><stop offset="1" stop-color="#ffe6a6" stop-opacity="0"/></radialGradient>
+          <linearGradient id="coneGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2a0" stop-opacity=".45"/><stop offset="1" stop-color="#ffe2a0" stop-opacity="0"/></linearGradient>
+          <radialGradient id="poolGrad"><stop offset="0" stop-color="#ffd98f" stop-opacity=".6"/><stop offset="1" stop-color="#ffd98f" stop-opacity="0"/></radialGradient>
+          <linearGradient id="winGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2d0" stop-opacity=".55"/><stop offset="1" stop-color="#fff2d0" stop-opacity="0"/></linearGradient>
+          <radialGradient id="weldGrad"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#cfe8ff" stop-opacity=".9"/><stop offset="1" stop-color="#7fb8ff" stop-opacity="0"/></radialGradient>
+          <filter id="eyeGlow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="1.1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="beamGlow" filterUnits="userSpaceOnUse" x="0" y="0" width="960" height="540"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <clipPath id="torsoClip"><rect x="-24" y="-70" width="48" height="40" rx="6"/></clipPath>
+          <clipPath id="screenClip"><rect x="-23" y="-35" width="46" height="29" rx="8"/></clipPath>
+          <clipPath id="glassClip"><rect x="516" y="114" width="140" height="178"/></clipPath>
+          <clipPath id="bucketClip"><path d="M763.5 446H790.5L787 469H767Z"/></clipPath>
+        </defs>
+
+        <!-- the room -->
+        <g id="room">
+          <rect class="c-wall" x="-520" width="1480" height="470"/>
+          <rect class="c-wall2" x="-520" y="334" width="1480" height="124"/>
+          <path class="c-wain" d="M50 336V456M110 336V456M170 336V456M230 336V456M290 336V456M350 336V456M410 336V456M470 336V456M530 336V456M590 336V456M650 336V456M710 336V456M770 336V456M830 336V456M890 336V456"/>
+          <rect class="c-rail" x="-520" y="328" width="1480" height="7"/>
+          <rect class="c-base" x="-520" y="456" width="1480" height="14"/>
+          <path class="c-stain" d="M758 58c-9 26 8 44 2 74 24 12 44-12 34-40 8-16-6-34-22-34z"/>
+          <path class="c-stain" d="M168 40c-10 10-6 24 6 28 14 3 20-12 12-22z"/>
+          <rect class="c-floor" x="-520" y="470" width="1480" height="70"/>
+          <path class="c-plank" d="M0 486H960M0 505H960M0 525H960M80 470V486M240 470V486M410 470V486M600 470V486M770 470V486M150 486V505M330 486V505M520 486V505M700 486V505M880 486V505M60 505V525M260 505V525M450 505V525M640 505V525M830 505V525M190 525V540M380 525V540M560 525V540M740 525V540M920 525V540"/>
+          <rect class="c-ceil" x="-520" width="1480" height="36"/>
+          <rect class="c-ceil2" x="-520" y="34" width="1480" height="4"/>
+          <path class="c-side" d="M-520 0L-500 38V456L-520 470Z"/>
+          <path class="c-side" d="M960 0L940 38V456L960 470Z"/>
+          <g id="rug">
+            <ellipse class="c-rug" cx="470" cy="510" rx="172" ry="15"/>
+            <ellipse class="c-rug3" cx="470" cy="510" rx="160" ry="11"/>
+            <ellipse class="c-rug2" cx="470" cy="510" rx="140" ry="7.5"/>
+          </g>
+        </g>
+
+
+        <!-- kitchen -->
+        <g id="o-kitchen">
+          <rect x="-520" y="470" width="506" height="70" fill="url(#tiles)"/>
+          <rect class="c-base" x="-16" y="470" width="6" height="70"/>
+          <rect x="-500" y="268" width="264" height="110" fill="url(#subway)"/>
+          <g id="kCab">
+            <rect class="k-cab" x="-496" y="134" width="124" height="98" rx="3"/>
+            <g id="kCabIn"><rect class="k-fridge-in" x="-492" y="138" width="116" height="90" rx="2"/><rect class="c-shelf" x="-492" y="182" width="116" height="3"/>
+              <rect x="-486" y="158" width="14" height="24" rx="2" fill="#f1ede3" stroke="#cfc6b3"/><rect x="-468" y="162" width="12" height="20" rx="2" fill="#c9423a"/><rect x="-452" y="152" width="10" height="30" rx="1" fill="#3f6fa8"/><rect x="-438" y="164" width="16" height="18" rx="2" fill="#d8c08a"/>
+              <rect x="-484" y="206" width="12" height="22" rx="2" fill="#e8d36a"/><rect x="-468" y="210" width="14" height="18" rx="2" fill="#b8402c"/><rect x="-450" y="200" width="18" height="28" rx="2" fill="#f4f1ea" stroke="#cfc6b3"/></g>
+            <g id="kCabDoor"><rect class="k-cab" x="-496" y="134" width="124" height="98" rx="3"/><rect class="k-cab2" x="-490" y="140" width="54" height="86" rx="2"/><rect class="k-cab2" x="-432" y="140" width="54" height="86" rx="2"/><circle class="c-brass" cx="-440" cy="206" r="2.2"/><circle class="c-brass" cx="-428" cy="206" r="2.2"/></g>
+          </g>
+          <rect class="c-shelf" x="-494" y="262" width="118" height="5" rx="1"/>
+          <g id="spices">
+            <rect class="k-jar" x="-488" y="244" width="11" height="18" rx="2"/><rect x="-488" y="241" width="11" height="4" rx="1" fill="#b8402c"/>
+            <rect class="k-jar" x="-472" y="246" width="11" height="16" rx="2"/><rect x="-472" y="243" width="11" height="4" rx="1" fill="#6f8f4a"/>
+            <rect class="k-jar" x="-456" y="244" width="11" height="18" rx="2"/><rect x="-456" y="241" width="11" height="4" rx="1" fill="#3b3128"/>
+            <rect class="k-jar" x="-440" y="246" width="11" height="16" rx="2"/><rect x="-440" y="243" width="11" height="4" rx="1" fill="#d8a441"/>
+            <rect class="k-jar" x="-424" y="244" width="11" height="18" rx="2"/><rect x="-424" y="241" width="11" height="4" rx="1" fill="#8a5a3a"/>
+            <rect class="k-jar" x="-408" y="246" width="11" height="16" rx="2"/><rect x="-408" y="243" width="11" height="4" rx="1" fill="#f4efe2"/>
+          </g>
+          <rect class="k-cab" x="-500" y="388" width="136" height="82"/>
+          <rect class="k-cab2" x="-494" y="396" width="60" height="64" rx="2"/><rect class="k-cab2" x="-430" y="396" width="60" height="64" rx="2"/>
+          <circle class="c-brass" cx="-440" cy="410" r="2"/><circle class="c-brass" cx="-424" cy="410" r="2"/>
+          <rect class="k-counter" x="-504" y="376" width="142" height="12" rx="1.5"/>
+          <rect class="k-sink" x="-478" y="376" width="80" height="4" rx="1"/>
+          <path class="k-faucet" d="M-438 376V322Q-438 308-426 308H-420Q-408 308-408 320V326"/>
+          <rect class="c-chrome" x="-456" y="368" width="8" height="8" rx="2"/><rect class="c-chrome" x="-428" y="368" width="8" height="8" rx="2"/>
+          <rect class="k-steel" x="-330" y="36" width="36" height="166"/>
+          <path class="k-steel" d="M-376 236H-248L-262 198H-362Z"/>
+          <rect id="hoodLight" class="k-hoodlight" x="-340" y="233" width="56" height="3" rx="1.5"/>
+          <rect class="k-stove" x="-362" y="334" width="100" height="36" rx="4"/>
+          <rect class="k-display" x="-324" y="340" width="24" height="11" rx="2"/><text class="k-digits" x="-312" y="348.5">12:00</text>
+          <circle class="k-knob" cx="-350" cy="359" r="4.5"/><circle class="k-knob" cx="-336" cy="359" r="4.5"/><circle class="k-knob" cx="-288" cy="359" r="4.5"/><circle class="k-knob" cx="-274" cy="359" r="4.5"/>
+          <rect class="k-cooktop" x="-366" y="368" width="108" height="10" rx="2"/>
+          <path class="k-grate" d="M-358 367H-312M-310 367H-266"/>
+          <rect class="k-stove" x="-362" y="378" width="100" height="92" rx="3"/>
+          <rect class="c-chrome" x="-350" y="384" width="76" height="4" rx="2"/>
+          <rect class="k-ovenwin" x="-346" y="396" width="68" height="40" rx="4"/>
+          <rect x="-340" y="400" width="18" height="3" rx="1.5" fill="rgba(255,255,255,.12)"/>
+          <rect class="k-stove2" x="-354" y="446" width="84" height="18" rx="2"/>
+          <rect class="k-cab" x="-262" y="388" width="26" height="82"/>
+          <rect class="k-counter" x="-262" y="376" width="30" height="12" rx="1.5"/>
+          <line class="k-rail" x1="-222" y1="152" x2="-100" y2="152"/>
+          <g id="railTools" transform="translate(0 -96)">
+            <rect class="k-utensil" x="-212" y="248" width="2.4" height="30" rx="1"/><path class="k-utensil" d="M-217 276H-205C-205 283-208 286-211 286C-214 286-217 283-217 276Z"/>
+            <rect class="k-utensil2" x="-186" y="248" width="3" height="16" rx="1"/><rect class="k-utensil" x="-190.5" y="263" width="12" height="11" rx="1.5"/>
+            <rect class="k-utensil2" x="-160" y="248" width="3" height="14" rx="1"/><path d="M-158.5 262C-165 266-164 280-158.5 282C-153 280-152 266-158.5 262Z" fill="none" stroke="#b3b9bf" stroke-width="1.2"/>
+            <rect class="k-utensil2" x="-134" y="248" width="3.4" height="10" rx="1"/><path d="M-134.8 258H-129.6L-130.6 282L-134.8 278Z" fill="#dfe4e8" stroke="#9aa1a8" stroke-width=".6"/>
+            <rect class="k-utensil" x="-112" y="248" width="2.4" height="22" rx="1"/><rect class="k-utensil" x="-116" y="268" width="10" height="7" rx="3"/>
+          </g>
+          <g id="board">
+            <rect x="-225" y="235" width="128" height="96" rx="3" fill="#8a5a34"/>
+            <rect x="-220" y="240" width="118" height="86" rx="1.5" fill="url(#cork)"/>
+            <rect x="-220" y="240" width="118" height="3" fill="rgba(0,0,0,.12)"/>
+            <g id="boardNotes"></g>
+          </g>
+          <rect class="k-cab" x="-226" y="406" width="130" height="64"/>
+          <rect class="k-shelfin" x="-220" y="412" width="118" height="30" rx="2"/>
+          <ellipse cx="-196" cy="436" rx="14" ry="5" fill="#e6dfcf"/><ellipse cx="-196" cy="432" rx="12" ry="4" fill="#efe9dc"/>
+          <rect x="-168" y="422" width="30" height="18" rx="3" fill="#8e949a"/><rect x="-128" y="428" width="20" height="12" rx="3" fill="#b8452f"/>
+          <rect class="k-cab2" x="-220" y="446" width="118" height="20" rx="2"/>
+          <rect class="k-block" x="-232" y="394" width="142" height="12" rx="2"/>
+          <path class="k-blockline" d="M-214 394v12M-194 394v12M-174 394v12M-154 394v12M-134 394v12M-114 394v12"/>
+          <line class="c-cord" x1="-161" y1="36" x2="-161" y2="92"/>
+          <path class="k-pendant" d="M-171 92H-151L-145 104H-177Z"/>
+          <circle id="bulb2" class="c-bulb" cx="-161" cy="107" r="5.5"/>
+          <g id="kFridge">
+            <rect class="k-fridge2" x="-80" y="464" width="64" height="7" rx="2"/>
+            <rect class="k-fridge" x="-80" y="240" width="64" height="228" rx="10"/>
+            <g id="kFridgeIn"><rect class="k-fridge-in" x="-76" y="306" width="56" height="158" rx="3"/><rect class="k-fridge2" x="-76" y="346" width="56" height="3"/><rect class="k-fridge2" x="-76" y="392" width="56" height="3"/>
+              <rect x="-70" y="326" width="10" height="20" rx="2" fill="#fbfaf5" stroke="#cfc6b3"/><ellipse cx="-50" cy="342" rx="7" ry="4" fill="#f2a25c"/><rect x="-40" y="332" width="14" height="14" rx="2" fill="#f0d36a"/>
+              <path d="M-70 392l6-18 6 18z" fill="#7dbb5a"/><circle cx="-50" cy="386" r="6" fill="#9a5a3a"/><rect x="-40" y="378" width="16" height="14" rx="2" fill="#f4efe2" stroke="#d9cfbd"/>
+              <rect x="-72" y="424" width="30" height="16" rx="2" fill="#f7f4ec" stroke="#d9cfbd"/><ellipse cx="-57" cy="428" rx="11" ry="4" fill="#e6a9a0"/></g>
+            <g id="kFridgeDoor"><rect class="k-fridge" x="-80" y="304" width="64" height="164" rx="6"/><rect class="c-chrome" x="-26" y="318" width="4" height="56" rx="2"/><rect x="-66" y="330" width="16" height="12" rx="1" fill="#fbf6e6"/><circle cx="-44" cy="336" r="3" fill="#e0664d"/></g>
+            <line x1="-80" y1="302" x2="-16" y2="302" stroke="#94ad9f" stroke-width="2"/>
+            <rect class="c-chrome" x="-26" y="258" width="4" height="30" rx="2"/>
+          </g>
+        </g>
+        <g id="kitDyn"></g>
+
+        <!-- things in the apartment -->
+        <g id="o-door">
+          <rect class="c-doorframe" x="32" y="228" width="100" height="242"/>
+          <rect class="c-door" x="40" y="236" width="84" height="234"/>
+          <rect class="c-door2" x="50" y="248" width="64" height="80" rx="2"/>
+          <rect class="c-door2" x="50" y="376" width="64" height="80" rx="2"/>
+          <rect class="c-brass" x="60" y="346" width="44" height="13" rx="2"/>
+          <rect class="c-dark" x="64" y="350.5" width="36" height="4" rx="1"/>
+          <circle class="c-brass" cx="114" cy="398" r="4.6"/>
+          <circle class="c-dark" cx="82" cy="266" r="2"/>
+        </g>
+        <g id="o-switch">
+          <rect class="c-plate-wall" x="140" y="300" width="14" height="22" rx="2"/>
+          <rect id="switchToggle" class="c-dark" x="145" y="310" width="4" height="7" rx="1"/>
+        </g>
+        <g id="o-bin">
+          <path class="c-bin" d="M139 428H167L163 470H143Z"/>
+          <rect class="c-bin2" x="136" y="423" width="34" height="7" rx="2"/>
+          <path d="M147 452l6-9 6 9z" fill="none" stroke="#dfe8df" stroke-width="1.6" stroke-linejoin="round"/>
+        </g>
+        <g id="o-shelf">
+          <rect class="c-shelf" x="176" y="200" width="106" height="270"/>
+          <rect class="c-shelf2" x="183" y="206" width="92" height="258"/>
+          <rect class="c-shelf" x="183" y="262" width="92" height="5"/>
+          <rect class="c-shelf" x="183" y="324" width="92" height="5"/>
+          <rect class="c-shelf" x="183" y="386" width="92" height="5"/>
+          <rect class="c-shelf" x="183" y="448" width="92" height="5"/>
+          <g id="books"></g>
+          <g id="figurines"></g>
+        </g>
+        <g id="o-clock">
+          <circle class="c-clockrim" cx="229" cy="128" r="27"/>
+          <circle class="c-clockface" cx="229" cy="128" r="22.5"/>
+          <path class="c-hand" stroke-width="1.6" d="M229 108v3M229 145v3M209 128h3M246 128h3"/>
+          <line id="clkH" class="c-hand" stroke-width="3.2" x1="229" y1="128" x2="229" y2="116"/>
+          <line id="clkM" class="c-hand" stroke-width="2" x1="229" y1="128" x2="229" y2="110"/>
+          <circle class="c-dark" cx="229" cy="128" r="2.2"/>
+        </g>
+        <g id="o-chair">
+          <rect class="c-wood-dark" x="296" y="456" width="6" height="14"/>
+          <rect class="c-wood-dark" x="384" y="456" width="6" height="14"/>
+          <path class="c-chair" d="M298 442V394Q298 368 322 368H366Q390 368 390 394V442Z"/>
+          <path d="M318 382V432M344 378V432M370 382V432" stroke="#405958" stroke-width="2" fill="none"/>
+          <rect class="c-chair3" x="310" y="402" width="68" height="28" rx="8"/>
+          <rect class="c-chair2" x="292" y="430" width="102" height="30" rx="6"/>
+          <rect class="c-chair" x="282" y="404" width="22" height="58" rx="9"/>
+          <rect class="c-chair" x="382" y="404" width="22" height="58" rx="9"/>
+        </g>
+        <g id="o-picture">
+          <g id="pictureFrame" transform="rotate(0 343 201)">
+            <path d="M343 158L316 173M343 158L370 173" stroke="#3a2b20" stroke-width="1.2" fill="none"/>
+            <rect class="c-frame" x="312" y="172" width="62" height="58" rx="2"/>
+            <rect class="c-art-sky" x="318" y="178" width="50" height="46"/>
+            <circle class="c-art-sun" cx="356" cy="190" r="6"/>
+            <path class="c-art-hill2" d="M318 214L334 198L346 208L358 196L368 206V224H318Z"/>
+            <path class="c-art-hill" d="M318 224V216Q336 206 352 216T368 214V224Z"/>
+          </g>
+          <circle class="c-dark" cx="343" cy="158" r="1.8"/>
+        </g>
+        <g id="o-lamp">
+          <ellipse class="c-lamppole" cx="410" cy="468" rx="15" ry="3.5"/>
+          <rect class="c-lamppole" x="408.5" y="304" width="3" height="164"/>
+          <path id="lampShade" class="c-shade" d="M397 276H423L432 306H388Z"/>
+          <line class="c-cord" x1="419" y1="306" x2="419" y2="322" style="stroke-width:1"/>
+          <circle class="c-brass" cx="419" cy="323.5" r="1.9"/>
+        </g>
+        <g id="o-radio">
+          <rect class="c-table" x="440" y="420" width="54" height="6" rx="1"/>
+          <rect class="c-table2" x="463" y="426" width="8" height="40"/>
+          <rect class="c-table" x="452" y="464" width="30" height="6" rx="1"/>
+          <line class="c-cord" x1="486" y1="392" x2="500" y2="364" style="stroke-width:1.2"/>
+          <rect class="c-radio" x="444" y="390" width="46" height="30" rx="6"/>
+          <rect class="c-radio2" x="444" y="413" width="46" height="7" rx="3"/>
+          <circle class="c-grille" cx="458" cy="403" r="8.5"/>
+          <path d="M451 399h14M450 403h16M451 407h14" stroke="#5a4535" stroke-width="1" fill="none"/>
+          <rect id="radioDial" class="c-dial" x="471" y="396" width="14" height="9" rx="1.5"/>
+          <line x1="477" y1="396" x2="477" y2="405" stroke="#8c3a2a" stroke-width="1"/>
+          <circle class="c-radio2" cx="481" cy="411" r="2"/>
+        </g>
+        <g id="o-window">
+          <rect class="c-winframe" x="506" y="104" width="160" height="196" rx="2"/>
+          <g clip-path="url(#glassClip)">
+            <rect class="sky sky-morning" x="516" y="114" width="140" height="178" fill="url(#skyMorning)"/>
+            <rect class="sky sky-day" x="516" y="114" width="140" height="178" fill="url(#skyDay)"/>
+            <rect class="sky sky-evening" x="516" y="114" width="140" height="178" fill="url(#skyEvening)"/>
+            <rect class="sky sky-night" x="516" y="114" width="140" height="178" fill="url(#skyNight)"/>
+            <g id="stars"><circle class="c-star" cx="530" cy="128" r="1"/><circle class="c-star" cx="552" cy="146" r="0.8"/><circle class="c-star" cx="574" cy="124" r="1.1"/><circle class="c-star" cx="600" cy="138" r="0.8"/><circle class="c-star" cx="626" cy="120" r="1"/><circle class="c-star" cx="644" cy="150" r="0.9"/><circle class="c-star" cx="540" cy="176" r="0.8"/><circle class="c-star" cx="612" cy="172" r="0.9"/></g>
+            <circle id="sunMoon" cx="620" cy="150" r="11" fill="#fff4c8"/>
+            <g id="clouds">
+              <path class="c-cloud" d="M0 0h30a8 8 0 0 0-9-10 10 10 0 0 0-17 2 7 7 0 0 0-4 8z" transform="translate(540 160)"/>
+              <path class="c-cloud" d="M0 0h24a7 7 0 0 0-8-8 8 8 0 0 0-14 2 6 6 0 0 0-2 6z" transform="translate(610 136)"/>
+            </g>
+            <rect class="c-city2" x="514" y="238" width="26" height="60"/>
+            <rect class="c-city" x="538" y="254" width="20" height="44"/>
+            <rect class="c-city2" x="556" y="222" width="18" height="76"/>
+            <rect class="c-city" x="572" y="246" width="30" height="52"/>
+            <rect class="c-city2" x="600" y="230" width="16" height="68"/>
+            <rect class="c-city" x="614" y="260" width="24" height="38"/>
+            <rect class="c-city2" x="636" y="242" width="22" height="56"/>
+            <rect class="c-citylight" x="520" y="248" width="4" height="4"/><rect class="c-citylight" x="530" y="262" width="4" height="4"/><rect class="c-citylight" x="560" y="232" width="4" height="4"/><rect class="c-citylight" x="566" y="252" width="4" height="4"/><rect class="c-citylight" x="580" y="256" width="4" height="4"/><rect class="c-citylight" x="604" y="240" width="4" height="4"/><rect class="c-citylight" x="620" y="270" width="4" height="4"/><rect class="c-citylight" x="642" y="252" width="4" height="4"/>
+          </g>
+          <rect class="c-winframe" x="584" y="114" width="4" height="178"/>
+          <rect class="c-winframe" x="516" y="200" width="140" height="4"/>
+          <g id="blinds" class="open"></g>
+          <line class="c-cord" x1="652" y1="116" x2="652" y2="250" style="stroke-width:1"/>
+          <rect class="c-brass" x="649" y="250" width="6" height="10" rx="2"/>
+          <rect class="c-sill" x="500" y="292" width="172" height="10" rx="1"/>
+        </g>
+        <g id="o-dock">
+          <rect class="c-plate-wall" x="672" y="426" width="12" height="18" rx="2"/>
+          <circle class="c-dark" cx="678" cy="432" r="1.3"/><circle class="c-dark" cx="678" cy="438" r="1.3"/>
+          <path class="c-cable" d="M662 462C678 464 680 452 678 442"/>
+          <rect class="c-dock" x="512" y="448" width="152" height="22" rx="4"/>
+          <rect class="c-dock2" x="512" y="443" width="152" height="8" rx="3"/>
+          <rect id="dockStrip" class="c-dockstrip" x="526" y="459" width="124" height="3.5" rx="1.75"/>
+          <ellipse class="c-pillow" cx="540" cy="439" rx="19" ry="6.5"/>
+          <g id="blanketFolded">
+            <rect class="c-blanket" x="612" y="431" width="44" height="13" rx="4"/>
+            <path d="M619 431V444M628 431V444M637 431V444M646 431V444" stroke="#9db5cb" stroke-width="2"/>
+          </g>
+        </g>
+        <g id="o-fridge">
+          <rect class="c-fridge2" x="690" y="466" width="58" height="6" rx="2"/>
+          <rect class="c-fridge" x="688" y="372" width="62" height="96" rx="6"/>
+          <g id="fridgeIn">
+            <rect class="c-fridge-in" x="693" y="378" width="52" height="86" rx="3"/>
+            <rect class="c-fridge2" x="693" y="405" width="52" height="3"/>
+            <rect class="c-fridge2" x="693" y="433" width="52" height="3"/>
+            <rect class="c-snack" x="697" y="390" width="8" height="15" rx="2"/><rect class="c-snack" x="708" y="390" width="8" height="15" rx="2"/><rect class="c-snack" x="719" y="390" width="8" height="15" rx="2"/>
+            <rect class="c-snack" x="697" y="418" width="8" height="15" rx="2"/><rect class="c-snack" x="708" y="418" width="8" height="15" rx="2"/>
+            <rect class="c-snack2" x="697" y="446" width="8" height="15" rx="2"/><rect class="c-snack2" x="708" y="446" width="8" height="15" rx="2"/><rect class="c-snack2" x="719" y="446" width="8" height="15" rx="2"/>
+          </g>
+          <g id="fridgeDoor">
+            <rect class="c-fridge" x="688" y="372" width="62" height="96" rx="6"/>
+            <rect class="c-chrome" x="741" y="390" width="4" height="36" rx="2"/>
+            <text class="c-sign" x="716" y="452">SNACKS</text>
+          </g>
+        </g>
+        <g id="o-plant">
+          <g id="leaves"></g>
+          <path class="c-pot" d="M700 346H736L731 372H705Z"/>
+          <rect class="c-pot2" x="698" y="341" width="40" height="7" rx="2"/>
+          <ellipse class="c-soil" cx="718" cy="342" rx="16" ry="2.4"/>
+        </g>
+        <g id="o-pipe">
+          <rect class="c-pipe" x="556" y="30" width="10" height="24"/>
+          <rect class="c-pipe" x="556" y="44" width="384" height="10"/>
+          <rect class="c-pipe2" x="556" y="51.5" width="384" height="2.5"/>
+          <rect class="c-pipe2" x="640" y="38" width="6" height="20" rx="1"/>
+          <rect class="c-pipe2" x="880" y="38" width="6" height="20" rx="1"/>
+          <rect id="pipeJoint" class="c-rust" x="770" y="40" width="12" height="18" rx="2"/>
+        </g>
+        <g id="o-bucket">
+          <path class="c-bucket" d="M762 444H792L788 470H766Z"/>
+          <rect id="bucketWater" class="c-water" x="760" y="470" width="34" height="0" clip-path="url(#bucketClip)"/>
+          <path class="c-bucket2" d="M762 444H792M764 444Q777 431 790 444"/>
+        </g>
+        <g id="o-bench">
+          <rect class="c-peg" x="808" y="234" width="120" height="100" rx="2"/>
+          <g id="pegholes"></g>
+          <rect class="c-toolwood" x="822" y="254" width="4" height="40" rx="1.5"/><rect class="c-tool" x="814" y="249" width="20" height="8" rx="1.5"/>
+          <rect class="c-tool" x="847" y="258" width="4" height="36" rx="1.5"/><circle class="c-tool" cx="849" cy="256" r="6"/><rect class="c-peg" x="846.5" y="249" width="5" height="6"/>
+          <path class="c-tool" d="M866 252H902L898 272H870Z"/><rect class="c-toolwood" x="898" y="249" width="16" height="10" rx="3"/>
+          <rect class="c-toolwood" x="872" y="286" width="5" height="14" rx="2"/><rect class="c-tool" x="873.5" y="300" width="2" height="16"/>
+          <rect class="c-toolwood" x="886" y="286" width="5" height="14" rx="2"/><rect class="c-tool" x="887.5" y="300" width="2" height="18"/>
+          <rect class="c-toolwood" x="900" y="286" width="5" height="14" rx="2"/><rect class="c-tool" x="901.5" y="300" width="2" height="12"/>
+          <rect class="c-bench" x="800" y="396" width="134" height="10" rx="1.5"/>
+          <rect class="c-bench2" x="804" y="406" width="126" height="7"/>
+          <rect class="c-bench2" x="808" y="413" width="8" height="57"/>
+          <rect class="c-bench2" x="918" y="413" width="8" height="57"/>
+          <rect class="c-bench" x="808" y="446" width="118" height="5"/>
+          <rect class="c-toolbox" x="828" y="426" width="46" height="20" rx="2"/>
+          <rect class="c-toolbox2" x="828" y="433" width="46" height="3"/>
+          <path d="M842 426v-4h18v4" fill="none" stroke="#93371f" stroke-width="2.5"/>
+          <rect class="c-tool" x="806" y="384" width="22" height="12" rx="1.5"/>
+          <rect class="c-tool" x="811" y="377" width="12" height="8" rx="1"/>
+          <rect class="c-tool" x="904" y="392" width="20" height="4" rx="1.5"/>
+          <path d="M914 392L907 362L891 353" stroke="#6f777e" stroke-width="3" fill="none" stroke-linejoin="round"/>
+          <path class="c-tool" d="M878 346L897 351L893 362L875 356Z"/>
+          <g id="project"></g>
+        </g>
+        <g id="o-light">
+          <line class="c-cord" x1="470" y1="36" x2="470" y2="84"/>
+          <rect class="c-socket" x="464.5" y="82" width="11" height="9" rx="1.5"/>
+          <circle id="bulb" class="c-bulb" cx="470" cy="98" r="8.5"/>
+        </g>
+        <g id="cracks"></g>
+
+        <!-- things that change on the floor -->
+        <g id="dyn">
+          <ellipse id="puddle" class="c-water" cx="777" cy="486" rx="0" ry="0" opacity=".75"/>
+          <g id="mailPile"></g>
+          <g id="dustLayer"></g>
+        </g>
+
+        <rect id="nightShade" x="-520" y="0" width="1480" height="540" opacity="0"/>
+        <g id="glows">
+          <path id="gWin" d="M516 470H656L716 540H560Z" fill="url(#winGrad)" opacity="0"/>
+          <path id="gCone" d="M458 106H482L622 470H318Z" fill="url(#coneGrad)" opacity="0"/>
+          <circle id="gHalo" cx="470" cy="98" r="42" fill="url(#haloGrad)" opacity="0"/>
+          <ellipse id="gLampHalo" cx="410" cy="298" rx="62" ry="48" fill="url(#poolGrad)" opacity="0"/>
+          <ellipse id="gLampPool" cx="382" cy="488" rx="124" ry="26" fill="url(#poolGrad)" opacity="0"/>
+          <ellipse id="gDesk" cx="872" cy="394" rx="58" ry="17" fill="url(#poolGrad)" opacity="0"/>
+          <circle id="gRadio" cx="478" cy="401" r="13" fill="url(#poolGrad)" opacity="0"/>
+          <rect id="gDock" x="520" y="450" width="136" height="18" rx="9" fill="url(#poolGrad)" opacity="0"/>
+          <rect id="gFridge" x="693" y="378" width="52" height="86" fill="#fff6dc" opacity="0"/>
+          <path id="gCone2" d="M-170 112H-152L-80 470H-242Z" fill="url(#coneGrad)" opacity="0"/>
+          <circle id="gHalo2" cx="-161" cy="107" r="30" fill="url(#haloGrad)" opacity="0"/>
+          <path id="gHood" d="M-344 238H-280L-262 372H-362Z" fill="url(#coneGrad)" opacity="0"/>
+          <ellipse id="gFlame0" cx="-334" cy="368" rx="30" ry="9" fill="url(#poolGrad)" opacity="0"/>
+          <ellipse id="gFlame1" cx="-288" cy="368" rx="26" ry="8" fill="url(#poolGrad)" opacity="0"/>
+          <rect id="gKFridge" x="-76" y="306" width="56" height="158" fill="#fff6dc" opacity="0"/>
+        </g>
+
+        <g id="hits"></g>
+
+        <!-- Bo -->
+        <g id="bo" transform="translate(588 496)">
+          <ellipse class="bo-shadow" cx="0" cy="0" rx="30" ry="3.6"/>
+          <g id="boFlip">
+            <g id="boLegs">
+              <g id="legL" transform="translate(-12 0)">
+                <rect class="bo-3" x="-3.5" y="-25" width="7" height="19"/>
+                <rect class="bo-2" x="-6" y="-27" width="12" height="7" rx="2"/>
+                <rect class="bo-1" x="-11" y="-8" width="22" height="8" rx="3"/>
+                <rect x="-11" y="-3" width="22" height="3" rx="1.5" fill="url(#haz)"/>
+              </g>
+              <g id="legR" transform="translate(12 0)">
+                <rect class="bo-3" x="-3.5" y="-25" width="7" height="19"/>
+                <rect class="bo-2" x="-6" y="-27" width="12" height="7" rx="2"/>
+                <rect class="bo-1" x="-11" y="-8" width="22" height="8" rx="3"/>
+                <rect x="-11" y="-3" width="22" height="3" rx="1.5" fill="url(#haz)"/>
+              </g>
+            </g>
+            <g id="boBody">
+              <g id="armBackSlot"></g>
+              <rect class="bo-3" x="-18" y="-33" width="36" height="9" rx="2"/>
+              <rect class="bo-2" x="-30" y="-66" width="7" height="26" rx="3.5"/>
+              <rect class="bo-2" x="23" y="-66" width="7" height="26" rx="3.5"/>
+              <rect class="bo-1" x="-24" y="-70" width="48" height="40" rx="8"/>
+              <rect id="torsoSide" class="bo-3" x="-24" y="-66" width="6" height="32" rx="3" opacity="0"/>
+              <g id="chest">
+                <g clip-path="url(#torsoClip)"><rect x="-24" y="-43" width="48" height="7" fill="url(#haz)"/></g>
+                <rect class="bo-2" x="-19" y="-66" width="38" height="17" rx="4"/>
+                <rect id="intake" x="-9" y="-62" width="18" height="5" rx="2.5"/>
+                <rect class="bo-3" x="-13" y="-54.5" width="26" height="2" rx="1"/>
+              </g>
+              <circle class="bo-3" cx="-20" cy="-33.8" r="1.1"/><circle class="bo-3" cx="20" cy="-33.8" r="1.1"/>
+              <g id="blanket" style="display:none">
+                <path class="c-blanket" d="M-31 1C-33-20-27-38-21-42H21C27-38 33-20 31 1Z"/>
+                <path d="M-27-10H27M-29-22H29M-25-34H25" stroke="#9db5cb" stroke-width="2.4" fill="none"/>
+              </g>
+              <g id="armFrontSlot">
+                <g id="armL" transform="translate(-26 -62) rotate(8)">
+                  <circle class="bo-3" cx="0" cy="0" r="5"/>
+                  <rect class="bo-2" x="-3.5" y="1" width="7" height="17" rx="3"/>
+                  <rect id="pistonL" class="bo-3" x="-1.7" y="16" width="3.4" height="0.5"/>
+                  <g id="foreL">
+                    <rect class="bo-3" x="-2.5" y="16" width="5" height="4" rx="1"/>
+                    <rect class="bo-1" x="-4.5" y="19" width="9" height="12" rx="3"/>
+                    <path class="bo-3" d="M-5 30h3v6h-3zM2 30h3v6h-3z"/>
+                  </g>
+                </g>
+              </g>
+              <g id="armR" transform="translate(26 -62) rotate(-8)">
+                <circle class="bo-3" cx="0" cy="0" r="5"/>
+                <rect class="bo-2" x="-3.5" y="1" width="7" height="17" rx="3"/>
+                <rect id="pistonR" class="bo-3" x="-1.7" y="16" width="3.4" height="0.5"/>
+                <g id="foreR">
+                  <rect class="bo-3" x="-2.5" y="16" width="5" height="4" rx="1"/>
+                  <rect class="bo-1" x="-4.5" y="19" width="9" height="12" rx="3"/>
+                  <g id="toolWrench"><rect class="tool" x="-1.4" y="29" width="2.8" height="11" rx="1"/><path class="tool" d="M-4.5 39h9v4.5h-2.6v-2.2h-3.8v2.2h-2.6z"/></g>
+                  <g id="toolTorch" style="display:none"><rect class="tool-dark" x="-3" y="29" width="6" height="5" rx="1"/><rect class="tool" x="-1.2" y="33.5" width="2.4" height="5"/><circle class="torch-tip" cx="0" cy="38.5" r="1.4"/></g>
+                  <g id="toolCan" style="display:none"><rect class="t-can" x="-6" y="30" width="12" height="11" rx="2"/><path class="t-can" d="M5 32L14 25L16 27L7 35Z"/><path d="M-6 33C-11 33-11 39-6 39" fill="none" stroke="#56788a" stroke-width="1.6"/></g>
+                  <g id="toolBroom" style="display:none"><rect class="t-stick" x="-1.2" y="28" width="2.4" height="40" rx="1"/><path class="t-bristle" d="M-7 66H7L10 80H-10Z"/></g>
+                  <g id="toolSnack" style="display:none"><rect class="c-snack" x="-4.5" y="29" width="9" height="13" rx="2"/><rect class="c-snack2" x="-4.5" y="33" width="9" height="3"/></g>
+                  <g id="toolKnife" style="display:none"><rect class="t-handle" x="-1.6" y="28" width="3.2" height="9" rx="1"/><path class="t-blade" d="M-2.2 37H2.6L1.4 56L-2.2 52Z"/></g>
+                  <g id="toolWhisk" style="display:none"><rect class="t-handle" x="-1.4" y="28" width="2.8" height="10" rx="1"/><path class="t-wire" d="M0 38C-7 42-6 54 0 56C6 54 7 42 0 38ZM0 38C-3 44-3 52 0 56M0 38C3 44 3 52 0 56"/></g>
+                  <g id="toolLadle" style="display:none"><rect class="t-steel" x="-1.2" y="28" width="2.4" height="26" rx="1"/><path class="t-steel" d="M-6 53H6C6 59 3 62 0 62C-3 62-6 59-6 53Z"/></g>
+                  <g id="toolSpatula" style="display:none"><rect class="t-handle" x="-1.4" y="28" width="2.8" height="12" rx="1"/><rect class="t-steel" x="-0.8" y="39" width="1.6" height="10"/><rect class="t-steel" x="-6" y="48" width="12" height="10" rx="1.5"/></g>
+                  <path class="bo-3" d="M-5 30h3v5h-3zM2 30h3v5h-3z"/>
+                  <g id="holdR">
+                    <g id="itemBook" style="display:none"><rect id="bookCover" x="-8" y="30" width="16" height="20" rx="1.5" fill="#3f6b8a"/><rect x="-8" y="30" width="3" height="20" fill="rgba(0,0,0,.25)"/><rect x="-3" y="34" width="8" height="2" fill="rgba(255,255,255,.35)"/></g>
+                    <g id="itemLetter" style="display:none"><rect class="c-letter" x="-9" y="31" width="18" height="12" rx="1"/><path d="M-9 31L0 38L9 31" fill="none" stroke="#c9bfa9" stroke-width="1"/></g>
+                  </g>
+                </g>
+              </g>
+              <rect id="neckPiston" class="bo-3" x="-3.5" y="-80" width="7" height="6" rx="1.5"/>
+              <rect class="bo-2" x="-8" y="-76" width="16" height="7" rx="2.5"/>
+              <g id="boHead" transform="translate(0 -78)">
+                <g id="earL" transform="translate(-29 -21) scale(-1 1)"><path class="bo-2" d="M-1-5C6-10 13-7 13 0C13 6 6 8-1 4Z"/><rect class="bo-3" x="-2" y="-3" width="5" height="6" rx="1.5"/></g>
+                <g id="earR" transform="translate(29 -21)"><path class="bo-2" d="M-1-5C6-10 13-7 13 0C13 6 6 8-1 4Z"/><rect class="bo-3" x="-2" y="-3" width="5" height="6" rx="1.5"/></g>
+                <line id="antStem" class="ant-stem" x1="0" y1="-39" x2="0" y2="-54"/>
+                <circle id="antLight" class="ant-off" cx="0" cy="-55" r="3.4"/>
+                <rect class="bo-1" x="-29" y="-40" width="58" height="40" rx="12"/>
+                <path d="M-17-37.4H17" stroke="var(--bo-2)" stroke-width="2.4" stroke-linecap="round"/>
+                <rect id="headSide" class="bo-3" x="-29" y="-35" width="7" height="30" rx="3.5" opacity="0"/>
+                <g id="face">
+                  <rect class="bo-screen" x="-23" y="-35" width="46" height="29" rx="8"/>
+                  <g clip-path="url(#screenClip)">
+                    <g id="eyes" filter="url(#eyeGlow)"><rect id="eyeL" class="eye" x="-15.5" y="-29" width="10" height="14" rx="4"/><rect id="eyeR" class="eye" x="5.5" y="-29" width="10" height="14" rx="4"/></g>
+                    <circle id="glintL" class="glint" cx="-12.5" cy="-25" r="1.5"/><circle id="glintR" class="glint" cx="8.5" cy="-25" r="1.5"/>
+                    <rect id="lidL" class="lid" x="-21" y="-44" width="21" height="8"/><rect id="lidR" class="lid" x="0" y="-44" width="21" height="8"/>
+                    <ellipse id="lowL" class="lid" cx="-10.5" cy="4" rx="9" ry="7"/><ellipse id="lowR" class="lid" cx="10.5" cy="4" rx="9" ry="7"/>
+                    <path id="mouth" class="mouth" d="M0 0"/>
+                    <ellipse id="mouthO" class="mouth" cx="0" cy="-10.5" rx="2.2" ry="2.6" style="display:none"/>
+                    <rect id="cheekL" class="cheek" x="-20" y="-14" width="5" height="2" rx="1" opacity="0"/><rect id="cheekR" class="cheek" x="15" y="-14" width="5" height="2" rx="1" opacity="0"/>
+                    <g id="gClosed" style="display:none"><path class="eye-arc" d="M-15.5-21Q-10.5-16.5-5.5-21M5.5-21Q10.5-16.5 15.5-21"/></g>
+                    <g id="gBoot" style="display:none"><rect class="eye boot-line" x="-23" y="-21" width="46" height="1.6"/></g>
+                    <rect class="screen-glare" x="-20" y="-33" width="14" height="2.2" rx="1.1"/>
+                  </g>
+                </g>
+                <g id="gHat" opacity="0"><g id="gHatInner">
+                  <path class="hat" d="M-14-8C-21-10-20-23-12-22C-12-31 0-33 2-26C6-32 18-29 15-21C22-20 21-9 14-8Z"/>
+                  <rect class="hat" x="-14" y="-9" width="28" height="9" rx="2"/>
+                  <path d="M-6-9V-20M1-9V-22M8-9V-19" stroke="#e2dccd" stroke-width="1.2" fill="none"/>
+                </g></g>
+                <g id="gScope" opacity="0">
+                  <rect id="scope1" class="k-brass" x="0" y="-3.4" width="10" height="6.8" rx="1.5"/>
+                  <rect id="scope2" class="k-brass2" x="9" y="-4.1" width="11" height="8.2" rx="1.5"/>
+                  <rect id="scope3" class="k-brass" x="18" y="-4.8" width="11" height="9.6" rx="2"/>
+                  <rect id="scopeGlass" class="k-lensglass" x="28.5" y="-4" width="2.2" height="8" rx="1"/>
+                </g>
+                <g id="gLens" opacity="0">
+                  <line id="gLensArm" class="lens-arm" x1="26" y1="-37" x2="20" y2="-28"/>
+                  <g id="gLensHead"><circle class="lens-glass" r="10"/><circle class="lens-rim" r="10"/><path class="lens-glare" d="M-6-5A7.5 7.5 0 0 1 1-8"/></g>
+                </g>
+              </g>
+            </g>
+          </g>
+          <rect id="boHit" x="-38" y="-142" width="76" height="144" fill="transparent" style="cursor:pointer;pointer-events:all"/>
+        </g>
+
+        <g id="fx" pointer-events="none"></g>
+      </svg>
+      <div class="bubble" id="bubble" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span><span id="bubbleText"></span></div>
+      <div class="logline" id="logline" aria-hidden="true"></div>
+      <div class="hoverlabel" id="hoverLabel" aria-hidden="true"></div>
+      <div class="dropzone" id="dropzone" hidden><p>Drop it on Bo. Bo only reads the file's name.</p></div>
+      <div class="tip" id="tip" role="note" hidden>
+        <p>Talk to Bo in the box below, or click things around the apartment.</p>
+        <button id="tipClose" type="button">Got it</button>
+      </div>
+      <section class="recipe" id="recipe" aria-label="Recipe" hidden>
+        <header><div class="r-kicker" id="rKicker">Bo's Kitchen, lesson 1</div><h2 id="rTitle">Chicken soup</h2><p class="r-meta" id="rMeta"></p></header>
+        <p class="r-now" id="rNow"></p>
+        <div class="r-body" id="rBody"><h3>Ingredients</h3><ul id="rIngr"></ul><h3>Steps</h3><ol id="rSteps"></ol><p class="r-note" id="rNote"></p></div>
+        <footer><button type="button" id="rBack">Back</button><button type="button" id="rPause">Pause</button><button type="button" id="rNext">Next</button><button type="button" class="r-toggle" id="rToggle">Recipe</button><button type="button" class="r-end" id="rEnd">End</button></footer>
+      </section>
+      <div class="classsub" id="classSub" hidden><span class="dots"><i></i><i></i><i></i></span><span id="classSubText"></span></div>
+      <div class="lowerthird" id="lowerThird" hidden><b>Bo's Kitchen</b><span id="ltLesson">Lesson 1: Chicken soup</span></div>
+      <div class="skipcard" id="skipCard" hidden><svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13" fill="#f5f2ea"/><circle cx="15" cy="15" r="13" fill="none" stroke="#c9a25a" stroke-width="2"/><line class="hand" x1="15" y1="15" x2="15" y2="6" stroke="#2a2622" stroke-width="2.4" stroke-linecap="round"/><circle cx="15" cy="15" r="2" fill="#2a2622"/></svg><span id="skipText">Later</span></div>
+      <div class="clip-mark" aria-hidden="true">Bo Nini</div>
+      <div class="captions" aria-hidden="true">
+        <p class="cap-you" id="capYou"></p>
+        <p class="cap-bo" id="capBo"><span class="dots"><i></i><i></i><i></i></span><span id="capBoText"></span></p>
+      </div>
+    </div>
+
+    <footer class="aw-foot" id="awFoot">
+      <button class="energy" id="energyBtn" type="button" aria-label="Bo's energy. Open snacks." aria-expanded="false"><span class="energy-bar"><i></i></span>Energy</button>
+      <button class="cook" id="cookBtn" type="button" aria-label="Cooking classes" aria-expanded="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 12C1 11 1 6 5 6C5 2 10 1 11 4C13 1 18 3 17 7C20 8 19 12 16 12Z" fill="#f5f2ea" stroke="#9a8f78" stroke-width="1"/><rect x="5" y="12" width="11" height="5" rx="1.5" fill="#f5f2ea" stroke="#9a8f78" stroke-width="1"/></svg>Cooking class</button>
+      <div class="status" id="status"><span id="statusText">Starting up</span></div>
+      <button class="brainchip" id="brainChip" type="button" aria-label="Bo's brain settings" aria-expanded="false"><span class="dot" aria-hidden="true"></span><span id="brainChipText">Scripted</span></button>
+      <div class="talk" id="talk">
+        <input id="talkInput" type="text" placeholder="Talk to Bo" aria-label="Talk to Bo" autocomplete="off" maxlength="400" enterkeyhint="send">
+        <button id="talkSend" type="button">Send</button>
+      </div>
+    </footer>
+    <div class="aw-resize" id="awResize" aria-hidden="true"></div>
+  </section>
+
+  <footer class="taskbar" id="taskbar">
+    <div class="tb-left">
+      <button class="tb-start" id="startBtn" type="button" aria-label="About Bo Nini" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5" fill="currentColor" opacity=".85"/><rect x="13" y="4" width="7" height="7" rx="1.5" fill="currentColor" opacity=".55"/><rect x="4" y="13" width="7" height="7" rx="1.5" fill="currentColor" opacity=".55"/><rect x="13" y="13" width="7" height="7" rx="1.5" fill="#f2a71b"/></svg>
+      </button>
+      <button class="tb-app active" id="tbApp" type="button" aria-label="Bo Nini window">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="13" rx="3" fill="#454d55"/><rect x="4" y="5" width="12" height="8" rx="2" fill="#0e1215"/><rect x="6" y="7" width="2.6" height="4" rx="1" fill="#ffc54f"/><rect x="11.4" y="7" width="2.6" height="4" rx="1" fill="#ffc54f"/></svg>
+        <span>Bo Nini</span>
+      </button>
+    </div>
+    <div class="tray">
+      <button id="trayBo" type="button" aria-label="Open Bo Nini"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="13" rx="3" fill="#454d55"/><rect x="4" y="5" width="12" height="8" rx="2" fill="#0e1215"/><rect x="6" y="7" width="2.6" height="4" rx="1" fill="#ffc54f"/><rect x="11.4" y="7" width="2.6" height="4" rx="1" fill="#ffc54f"/></svg></button>
+      <button id="dirBtn" type="button" aria-label="Demo controls" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.7 6.3a5 5 0 0 1-6.6 6.2l-7.3 7.3a2 2 0 0 1-2.8-2.8l7.3-7.3a5 5 0 0 1 6.2-6.6l-3 3 .7 2.3 2.3.7z"/></svg></button>
+      <div class="clock" id="clock" aria-label="Clock"><span id="clockT"></span><span id="clockD"></span></div>
+    </div>
+  </footer>
+
+  <div class="flyout about" id="aboutFly" role="dialog" aria-label="About Bo Nini" hidden>
+    <div class="about-mark">Bo Nini</div>
+    <p>Bo lives in a little studio apartment on your desktop. It keeps its own routine, notices how long you've been gone, and talks when you want it to.</p>
+    <p>Tell Bo what you're working on. It pins it to the kitchen board and may ask about it when you come back.</p>
+    <p>This page is an interactive demo.</p>
+    <a href="https://bonini.biz" target="_blank" rel="noopener">Join the waitlist at bonini.biz</a>
+  </div>
+
+  <div class="flyout snacks" id="snackFly" role="dialog" aria-label="Bo's energy" hidden>
+    <h2>Bo's energy</h2>
+    <div class="bar" id="snackBar"><i></i></div>
+    <p class="note">Energy is thinking. Each reply costs a little, and Bo's own chores are free. When the tank runs dry, Bo naps on the dock.</p>
+    <p class="note snack-rule" id="snackRule"></p>
+    <h3>Give Bo a snack</h3>
+    <div class="snack-row">
+      <button type="button" data-snack="0.2"><span class="pips"><i class="on"></i><i></i><i></i></span>Small</button>
+      <button type="button" data-snack="0.5"><span class="pips"><i class="on"></i><i class="on"></i><i></i></span>Big</button>
+      <button type="button" data-snack="1"><span class="pips"><i class="on"></i><i class="on"></i><i class="on"></i></span>Full tank</button>
+    </div>
+  </div>
+
+  <div class="flyout lessons" id="lessonFly" role="dialog" aria-label="Cooking classes" hidden>
+    <h2>Bo's Kitchen</h2>
+    <p class="note" style="margin:0 0 10px !important">Real recipes. Bo teaches them step by step in the kitchen.</p>
+    <button type="button" class="lesson-btn" data-lesson="soup"><b>Lesson 1: Chicken soup</b><span>Serves 6. About 2 hours, mostly simmering.</span></button>
+    <button type="button" class="lesson-btn" data-lesson="pancakes"><b>Lesson 2: Fluffy pancakes</b><span>Makes about 8. 20 minutes.</span></button>
+    <button type="button" class="lesson-btn" data-lesson="spaghetti"><b>Lesson 3: Spaghetti with tomato sauce</b><span>Serves 4. About 35 minutes.</span></button>
+  </div>
+
+  <div class="flyout brainfly" id="brainFly" role="dialog" aria-label="Bo's brain" hidden>
+    <h2>Bo's brain</h2>
+    <div class="seg" id="bfMode"><button type="button" data-brain="live" aria-pressed="false">Live</button><button type="button" data-brain="scripted" aria-pressed="true">Scripted</button></div>
+    <p class="note" id="bfModeNote"></p>
+    <div id="bfClaude" hidden><p class="note">On claude.ai, Bo thinks with Claude through the viewer's claude.ai account, so no key is needed here. On the public version of this demo you can plug in your own key.</p></div>
+    <div id="bfForm">
+      <label class="bf-row"><span>Provider</span><select id="bfProvider"></select></label>
+      <label class="bf-row" id="bfUrlRow" hidden><span>Address</span><input id="bfUrl" type="url" spellcheck="false" autocomplete="off" placeholder="https://example.com/v1"></label>
+      <label class="bf-row" id="bfKeyRow"><span>API key</span><input id="bfKey" type="password" spellcheck="false" autocomplete="off"></label>
+      <label class="bf-row"><span>Model</span><input id="bfModel" list="bfModels" spellcheck="false" autocomplete="off" placeholder="Filled in when you connect"></label>
+      <datalist id="bfModels"></datalist>
+      <div class="bf-actions"><label class="bf-check"><input type="checkbox" id="bfRemember"> Remember key</label><button type="button" id="bfTest">Connect</button><button type="button" id="bfForget">Forget</button></div>
+      <p class="note bf-status" id="bfStatus" role="status"></p>
+      <p class="note" id="bfOllamaNote" hidden>Ollama has to allow this page first: set OLLAMA_ORIGINS to this site's address and restart Ollama.</p>
+      <p class="note">Your key stays in this browser and goes only to the provider you pick. Use one with a spending limit. Your key pays for the thinking, so it doesn't cost Bo energy.</p>
+    </div>
+  </div>
+
+  <div class="flyout boardfly" id="boardFly" role="dialog" aria-label="Bo's board" hidden>
+    <h2>Bo's board</h2>
+    <p class="note" style="margin:0 0 8px !important">Things you told Bo that it pinned in the kitchen. Saved only in this browser.</p>
+    <ul class="board-list" id="boardList"></ul>
+    <p class="note" id="boardEmpty">Nothing pinned yet. Tell Bo about something you're working on.</p>
+    <div class="seg"><button type="button" id="boardClear">Clear the board</button></div>
+  </div>
+
+  <div class="flyout director" id="dirFly" role="dialog" aria-label="Demo controls" hidden>
+    <h2>Demo controls</h2>
+    <h3>Simulate time away</h3>
+    <div class="seg">
+      <button type="button" data-away="1200000">20 minutes</button>
+      <button type="button" data-away="21600000">6 hours</button>
+      <button type="button" data-away="172800000">2 days</button>
+      <button type="button" data-away="1814400000">3 weeks</button>
+    </div>
+    <p class="note">Bo reacts as if you just came back after that long, and the apartment changes to match.</p>
+    <h3>Time of day</h3>
+    <div class="seg" id="todBtns">
+      <button type="button" data-tod="live" aria-pressed="true">Live clock</button>
+      <button type="button" data-tod="morning" aria-pressed="false">Morning</button>
+      <button type="button" data-tod="day" aria-pressed="false">Afternoon</button>
+      <button type="button" data-tod="evening" aria-pressed="false">Evening</button>
+      <button type="button" data-tod="night" aria-pressed="false">Night</button>
+    </div>
+    <h3>Make something happen</h3>
+    <div class="seg">
+      <button type="button" data-event="leak">Pipe leak</button>
+      <button type="button" data-event="flicker">Bulb flicker</button>
+      <button type="button" data-event="mail">Mail</button>
+      <button type="button" data-event="crack">Wall crack</button>
+      <button type="button" data-event="rumble">Rumble</button>
+      <button type="button" data-event="dust">Dust</button>
+    </div>
+    <h3>Energy</h3>
+    <div class="seg">
+      <button type="button" data-energy="low">Run it low</button>
+      <button type="button" data-energy="full">Fill it up</button>
+    </div>
+    <div class="seg" id="costBtns" style="margin-top:6px">
+      <button type="button" data-cost="cloud" aria-pressed="true">Cloud model: costs energy</button>
+      <button type="button" data-cost="local" aria-pressed="false">Local model: free</button>
+    </div>
+    <p class="note">In the real product, a model on your own machine costs nothing to run, so Bo's energy only applies to cloud thinking.</p>
+    <h3>Brain</h3>
+    <div class="seg" id="brainBtns">
+      <button type="button" data-brain="live" aria-pressed="false">Live</button>
+      <button type="button" data-brain="scripted" aria-pressed="true">Scripted</button>
+    </div>
+    <p class="note" id="brainNote"></p>
+    <h3>Output</h3>
+    <div class="seg">
+      <button type="button" id="voiceBtn" aria-pressed="false">Voice</button>
+      <button type="button" id="clipBtn" aria-pressed="false">Vertical clip frame</button>
+    </div>
+    <h3>Start over</h3>
+    <div class="seg"><button type="button" id="resetBtn">Reset Bo's world</button></div>
+    <p class="note">Press the backtick key ( ` ) to open or close this panel.</p>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden><span>Bo Nini is still running in the tray.</span><button type="button" id="toastOpen">Open</button></div>
+  <div class="sr-only" id="srLive" aria-live="polite"></div>
+  <button class="clip-exit" id="clipExit" type="button">Exit clip frame</button>
+</div>
+<script>
+(() => {
+'use strict';
