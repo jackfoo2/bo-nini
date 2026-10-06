@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.6.1 (2026-09-30)
+
+- **Faster Bo.** Bo walks faster everywhere, and much faster during the tour.
+- **Time to read.** Bo's lines type out more slowly and stay up longer, and back-to-back lines wait until you've had time to read the last one.
+- **A shared armchair.** When Bo sits down and the cat has the seat, the cat moves over to the armrest. While Bo sits, the cat sometimes comes and naps there.
+
+## v0.6.0 (2026-09-30)
+
+- **The tour.** A 90-second guided tour. Bo fixes something on its own, you tell it something and it pins it to the board, a slice of a cooking class, a three-week jump where Bo remembers what you said, energy running out and a snack, then the cat.
+- **Three ways in.** The "Take the tour" button at the bottom of the window, the tip on your first visit, or `?tour` at the end of the link to start it as soon as the page loads.
+
 ## v0.5.0 (2026-09-30)
 
 - **A cat.** A ginger cat lives in the apartment with its own routine: naps on the armchair, in the sunbeam and on Bo's dock, sits in the window, bats at dust bunnies, and knocks things off the workbench. It hops on the kitchen island during cooking classes and gets shooed off.

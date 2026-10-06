@@ -714,6 +714,7 @@ function renderCard() {
   $('#rToggle').textContent = cls.expanded ? 'Less' : 'Recipe';
   const sw = stage.getBoundingClientRect().width, compact = sw < 720 && !cls.expanded;
   stage.classList.toggle('narrow', sw < 600);
+  if (tour.on && sw < 1100) recipe.hidden = true;
   recipe.classList.toggle('compact', compact);
   if (sw < 600) stage.style.setProperty('--rh', recipe.offsetHeight + 'px');
   const cur = $$('#rSteps li')[cls.step];
@@ -726,6 +727,7 @@ function showLowerThird(L) {
 }
 function rebuildTo(L, j) { resetKitchen(); L.setup(); for (let k = 0; k < j; k++) L.steps[k].apply(); renderKitchen(); }
 async function startClass(id) {
+  if (tour.on && !tour.allowClass) endTour();
   const L = LESSONS.find((x) => x.id === id);
   if (!L) return;
   closeFlyouts(); hideTip();
@@ -737,14 +739,14 @@ async function startClass(id) {
   interrupt(); hideBubbleNow(); forceNext = null;
   const my = ++cls.run;
   Object.assign(cls, { on: true, L, step: 0, paused: false, jump: null, intro: false });
-  bo.mode = 'class'; bo.speed = 80; gadget('hat', true);
+  bo.mode = 'class'; bo.speed = tour.on ? 180 : 80; gadget('hat', true);
   resetKitchen(); L.setup(); renderKitchen(); buildCard(L); renderCard(); showLowerThird(L);
   setDoing(`Teaching ${L.title.toLowerCase()}`, `teaching a cooking class in the kitchen: ${L.title.toLowerCase()}`);
   const tok0 = makeTok(); cls.tok = tok0; activity = tok0;
-  bo.speed = 120; cls.intro = true;
+  bo.speed = tour.on ? 200 : 120; cls.intro = true;
   const introSpeech = say(L.intro, readTime(L.intro) + 800);
   await walkTo(-300, tok0);
-  bo.speed = 80;
+  bo.speed = tour.on ? 180 : 80;
   if (!cls.on || cls.run !== my) return;
   if (!tok0.c) { faceFront(); setExpr('happy'); await introSpeech; await wait(700, tok0); }
   cls.intro = false;
@@ -786,7 +788,7 @@ function endClass(quiet) {
   cls.on = false; cls.run++;
   if (cls.tok) cls.tok.cancel();
   stopWeld(); resetArms(); gadget('hat', false); gadget('lens', false); gadget('scope', false);
-  bo.speed = currentTod() === 'night' ? 34 : 44;
+  bo.speed = baseSpeed();
   recipe.hidden = true; $('#lowerThird').hidden = true; $('#skipCard').hidden = true;
   kit.burners = [false, false]; kit.hood = false; kit.faucet = false; kit.carry = null; kit.fridgeOpen = false; kit.cabOpen = false;
   renderKitchen();

@@ -43,6 +43,7 @@ async function wake(line) {
   bo.mode = 'free';
 }
 function feedBo(amount) {
+  if (tour.on) endTour();
   closeFlyouts(); hideTip();
   const eat = (tok) => actEat(tok, amount);
   if (bo.mode === 'nap') { forceNext = eat; wake(); return; }
@@ -165,10 +166,10 @@ async function absence(ms) {
   bo.goal.turn = 1; await sleep(900); faceFront();
   setExpr(bucket === 'long' ? 'sad' : bucket === 'days' ? 'annoyed' : 'curious');
   const line = returnLine(bucket, list);
-  if (line) { await say(line); await sleep(1200); }
-  if (bucket !== 'short') { await say(pick([`${CatName()}'s fed. It slept on my dock most of the time.`, `${CatName()}'s fine. Fed and unbothered.`, `Cat report: fed, asleep, judging me.`])); await sleep(1100); }
+  if (line) { await say(line); await sleep(readPause(line)); }
+  if (bucket !== 'short') { await say(pick([`${CatName()}'s fed. It slept on my dock most of the time.`, `${CatName()}'s fine. Fed and unbothered.`, `Cat report: fed, asleep, judging me.`])); await sleep(readPause('fed and unbothered, more or less')); }
   const callback = noteCallback(bucket);
-  if (callback) { setExpr('curious'); await say(callback); await sleep(1400); }
+  if (callback) { setExpr('curious'); await say(callback); await sleep(readPause(callback)); }
   setExpr('squint');
   setDoing('Taking stock', 'just powered back up and taking stock of the apartment');
   absenceRunning = false;
@@ -206,7 +207,7 @@ function applyTod(src) {
   const t = currentTod(), changed = svg.getAttribute('data-tod') !== t;
   if (changed || src === 'init') {
     svg.setAttribute('data-tod', t); renderSky(); renderLighting();
-    bo.speed = t === 'night' ? 34 : 44;
+    if (!cls.on && !tour.on) bo.speed = baseSpeed();
     if (changed && src !== 'init' && bo.mode === 'free') log({ morning: 'Morning. Blinds, then the pipe.', day: 'Good light for welding.', evening: 'Getting dark.', night: 'Night shift.' }[t], true);
   }
   renderClock(); renderClockHands();
@@ -261,6 +262,7 @@ const CLASS_KEYS = { class_soup: 'soup', class_pancakes: 'pancakes', class_spagh
 const TAGS = Object.keys(ACTIONS).filter((k) => k !== 'clock').concat('snack', 'class_menu', ...Object.keys(CLASS_KEYS));
 function openLessons() { openFly(lessonFly, cookBtn); }
 function runAction(key, req) {
+  if (tour.on) endTour();
   if (CLASS_KEYS[key]) { startClass(CLASS_KEYS[key]); return; }
   if (key === 'class_menu') { openLessons(); return; }
   if (key === 'snack') { if (cls.on) { log('Snack after class.', true); return; } feedBo(0.4); return; }
@@ -508,6 +510,7 @@ async function respond(req) {
   else { statusText.textContent = 'Back to it'; bo.mode = 'free'; }
 }
 async function submit() {
+  if (tour.on) { if (tour.typing) return; endTour(); }
   const text = talkInput.value.trim();
   if (!text || busy) return;
   hideTip();
@@ -876,6 +879,7 @@ function showTip() {
 }
 function hideTip() { tip.hidden = true; userActed = true; }
 $('#tipClose').addEventListener('click', hideTip);
+$('#tipTour').addEventListener('click', () => { hideTip(); startTour(); });
 
 /* ---------- first boot + reset ---------- */
 async function firstBoot() {
@@ -897,7 +901,7 @@ async function firstBoot() {
   await say('Okay. Leak first.', 2000);
   await sleep(1300);
   faceFront(); forceNext = actFixLeak; bo.mode = 'free'; saveNow();
-  showTip();
+  if (!wantTour) showTip();
 }
 let resetArmedAt = 0;
 const resetBtn = $('#resetBtn');
@@ -908,6 +912,7 @@ resetBtn.addEventListener('click', () => {
     return;
   }
   resetArmedAt = 0; resetBtn.textContent = "Reset Bo's world"; closeFlyouts();
+  if (tour.on) endTour();
   if (cls.on) endClass(true);
   interrupt(); if (ctl) ctl.abort(); hideBubbleNow(); clearSaved(); resetKitchen();
   history.length = 0; felt = null; forceNext = null; busy = false; setSendState(); pictureNag = false;
@@ -939,12 +944,13 @@ function init() {
   picAngle = apt.tilt; $('#pictureFrame').setAttribute('transform', `rotate(${picAngle} 343 158)`);
   applyTod('init'); renderAll(); renderGauge(); renderKitchen(); renderBoard();
   fitWindow(); updateCam();
-  if (fresh) firstBoot();
+  if (fresh) firstBoot().then(() => { if (wantTour) startTour(); });
   else {
     bo.x = 480; bo.pose.perch = bo.goal.perch = 0; bo.pose.sit = bo.goal.sit = 0; setBlanket(false);
     bo.mode = 'free'; restExpr(); antenna('slow'); setDoing('Back at it', 'going about the day');
     if (gone >= MIN5) absence(gone);
     else if (bo.energy < 0.1) goNap();
+    if (wantTour) startTour();
   }
   setSendState();
   requestAnimationFrame(frame);

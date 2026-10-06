@@ -4,12 +4,13 @@ Bo is a small robot who lives in a studio apartment on your desktop. It keeps it
 
 This repo is an interactive **browser preview** of [Bo Nini](https://bonini.biz). It is not the desktop product. It's one web page that shows how Bo behaves.
 
-**Try it:** open the live demo from the link in the About box on this page, or download `index.html` and open it in any modern browser.
+**Try it:** open the live demo from the link in the About box on this page, or download `index.html` and open it in any modern browser. New here? Hit **Take the tour** at the bottom of the window for the 90-second guided version, or add `?tour` to the end of the link to start the tour as soon as the page loads.
 
 ![Bo cooking chicken soup in its kitchen](docs/bo-kitchen.gif)
 
 ## What to try
 
+- **Take the tour.** One click, and Bo shows the whole idea in about 90 seconds.
 - **Talk to Bo.** Tell it about something you're working on. Bo pins it to the corkboard in its kitchen and may ask how it went after you've been away.
 - **Leave and come back.** Bo has a felt sense of time. The apartment ages while you're gone, and Bo reacts to how long it's been. The demo controls (the wrench in the taskbar) can simulate anything from 20 minutes to 3 weeks.
 - **Take a cooking class.** Three real recipes: chicken soup, fluffy pancakes, and spaghetti with tomato sauce. Hit **Cooking class** and Bo teaches it step by step, with the full recipe on a card.
@@ -56,11 +57,12 @@ The source is split into parts in `src/`. `build.sh` joins them back into `index
 | `src/5-kitchen.js` | The kitchen and the three cooking classes |
 | `src/6-memory-brain.js` | The corkboard memory and the bring-your-own-key brain |
 | `src/7-cat.js` | The cat and Bo's cat chores |
+| `src/7-tour.js` | The 90-second guided tour |
 | `src/8-app.js` | Energy, felt time, chat, controls, and startup |
 
 ## Status
 
-v0.5.0, September 2026. An early preview: the art and behavior will keep changing.
+v0.6.1, September 2026. An early preview: the art and behavior will keep changing.
 
 ## License
 

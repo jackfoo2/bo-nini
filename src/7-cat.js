@@ -7,6 +7,7 @@ const CAT_SPOTS = {
   sill: { x: 590, y: 300, via: 'blanket' },
   bench: { x: 832, y: 396 },
   island: { x: -106, y: 394 },
+  armrest: { x: 395, y: 404 },
 };
 const CC = { fur: '#e4903c', dark: '#c46f24', cream: '#f6d9b0', nose: '#d9706a', eye: '#2a2622', ear: '#f2b8a0' };
 const cat = { x: 343, y: 430, dir: 1, pose: 'sleep', perch: 'chair', speed: 46, target: null, jump: null, phase: 0, blink: 2, swat: 0, purr: 0, eat: 0, hold: false, flee: false, called: false, counterDone: false, tok: null, hit: null };
@@ -186,6 +187,19 @@ async function catCounter(tok) {
   await catWait(700, tok);
   await catGoFloor(cat.x + 120, tok, 80);
 }
+// Bo is coming to sit: if the cat has the seat, it shifts over to the armrest
+function catMakeRoom() { if (cat.perch === 'chair') { cat.toArmrest = true; if (cat.tok) cat.tok.cancel(); } }
+async function catArmrest(tok) {
+  cat.toArmrest = false;
+  if (cat.perch === 'chair') { if (!(await catJump(CAT_SPOTS.armrest.x, CAT_SPOTS.armrest.y, tok))) return; cat.perch = 'armrest'; }
+  else if (!(await catGoPerch('armrest', tok))) return;
+  cat.dir = -1; cat.pose = 'sit';
+  await catWait(rand(2500, 4000), tok); if (tok.c) return;
+  if (bo.claim === 'chair') cat.pose = 'sleep';
+  const end = now() + rand(15000, 30000);
+  while (now() < end && !tok.c && bo.claim === 'chair') await sleep(150);
+  if (cat.pose === 'sleep') cat.pose = 'sit';
+}
 async function catFlee(tok) {
   cat.flee = false;
   await catGoFloor(cat.x + (bo.x > cat.x ? -1 : 1) * rand(140, 220), tok, 90);
@@ -246,10 +260,11 @@ async function catKitchen(tok) {
 function catChoose() {
   const day = !isDark(), tod = currentTod();
   if (cat.flee) return catFlee;
+  if (cat.toArmrest) return catArmrest;
   if (apt.catBowl > 0 && (cat.called || Math.random() < 0.5)) return catEat;
   if (cls.on && !cat.counterDone && Math.random() < 0.45) return catCounter;
   return weighted([
-    [catChair, 3], [catBlanket, bo.mode === 'nap' || bo.mode === 'napwalk' ? 0 : 2.4], [catSun, day && apt.blinds ? 3 : 0], [catSill, day ? 1.4 : 0.6],
+    [catChair, bo.claim === 'chair' ? 0 : 3], [catArmrest, bo.claim === 'chair' ? 2.5 : 0], [catBlanket, bo.mode === 'nap' || bo.mode === 'napwalk' ? 0 : 2.4], [catSun, day && apt.blinds ? 3 : 0], [catSill, day ? 1.4 : 0.6],
     [catWander, 2], [catFollow, cls.on ? 3 : 1.4], [catDust, apt.dust.length ? 1.8 : 0], [catBench, !apt.knocked && apt.project > 0.1 ? 0.9 : 0.2],
     [catKitchen, 0.8], [catZoomies, tod === 'evening' || tod === 'night' ? 0.7 : 0.15],
   ]);

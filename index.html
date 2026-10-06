@@ -472,6 +472,24 @@ button, input { font: inherit; color: inherit; }
 .aw-stage.narrow .lowerthird b { font-size: 20px; }
 .aw-stage.narrow .lowerthird span { font-size: 13px; }
 .desktop.clip .recipe, .desktop.clip .lowerthird, .desktop.clip .classsub { display: none !important; }
+/* the tour */
+.tourbtn { border-color: rgba(240, 168, 32, 0.7); }
+.tourbtn[aria-pressed="true"] { background: #fbe3b0; }
+.tourcard { position: absolute; z-index: 7; top: 10px; left: 50%; transform: translateX(-50%); width: min(560px, calc(100% - 20px)); box-sizing: border-box; padding: 10px 14px 10px; border-radius: 12px; border-top: 3px solid var(--amber); background: rgba(20, 22, 26, 0.93); color: #fff; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35); }
+.tour-top { display: flex; justify-content: space-between; align-items: baseline; font: 700 12px/1.2 var(--ui-cond); letter-spacing: 0.06em; text-transform: uppercase; color: #ffd98f; }
+.tour-kicker { color: var(--amber); }
+.tourcard p { margin: 4px 0 8px; font: 600 16px/1.4 var(--ui); }
+.tour-actions { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
+.tour-actions button, .tour-actions a { padding: 6px 12px; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 7px; background: rgba(255, 255, 255, 0.08); color: #fff; font: 600 13px/1.2 var(--ui); text-decoration: none; cursor: pointer; }
+.tour-actions button:hover, .tour-actions a:hover { border-color: var(--amber); }
+.tour-actions button:disabled { opacity: 0.4; cursor: default; }
+.tour-actions a { background: var(--amber); border-color: var(--amber); color: #1f1a10; }
+.tourcard.done { border-top-color: #3fae6a; }
+.aw-stage.narrow .tourcard { top: 8px; padding: 8px 11px; }
+.aw-stage.narrow .tourcard p { font-size: 14px; }
+.desktop.clip .tourcard { display: none !important; }
+.tip-actions { display: flex; gap: 8px; }
+.tip .tip-quiet { background: transparent; color: #f1eee8; border: 1px solid rgba(255, 255, 255, 0.3); }
 /* brain chip, brain panel, board */
 .brainchip { flex: none; display: flex; align-items: center; gap: 7px; height: 34px; padding: 0 11px; border: 1px solid var(--chrome-line); border-radius: 8px; background: var(--btn); cursor: pointer; font: 600 13px/1 var(--ui); color: var(--ink); }
 .brainchip:hover { border-color: var(--amber); }
@@ -1032,8 +1050,8 @@ button, input { font: inherit; color: inherit; }
       <div class="hoverlabel" id="hoverLabel" aria-hidden="true"></div>
       <div class="dropzone" id="dropzone" hidden><p>Drop it on Bo. Bo only reads the file's name.</p></div>
       <div class="tip" id="tip" role="note" hidden>
-        <p>Talk to Bo in the box below, or click things around the apartment.</p>
-        <button id="tipClose" type="button">Got it</button>
+        <p>New here? Take the 90-second tour, or talk to Bo and click things around the apartment.</p>
+        <div class="tip-actions"><button id="tipTour" type="button">Take the tour</button><button id="tipClose" class="tip-quiet" type="button">Look around</button></div>
       </div>
       <section class="recipe" id="recipe" aria-label="Recipe" hidden>
         <header><div class="r-kicker" id="rKicker">Bo's Kitchen, lesson 1</div><h2 id="rTitle">Chicken soup</h2><p class="r-meta" id="rMeta"></p></header>
@@ -1041,6 +1059,11 @@ button, input { font: inherit; color: inherit; }
         <div class="r-body" id="rBody"><h3>Ingredients</h3><ul id="rIngr"></ul><h3>Steps</h3><ol id="rSteps"></ol><p class="r-note" id="rNote"></p></div>
         <footer><button type="button" id="rBack">Back</button><button type="button" id="rPause">Pause</button><button type="button" id="rNext">Next</button><button type="button" class="r-toggle" id="rToggle">Recipe</button><button type="button" class="r-end" id="rEnd">End</button></footer>
       </section>
+      <div class="tourcard" id="tourCard" role="status" aria-live="polite" hidden>
+        <div class="tour-top"><span class="tour-kicker">Tour</span><span id="tourStep">1 of 6</span></div>
+        <p id="tourText"></p>
+        <div class="tour-actions"><button type="button" id="tourNext">Next</button><a id="tourWaitlist" href="https://bonini.biz" target="_blank" rel="noopener" hidden>Join the waitlist</a><button type="button" id="tourEnd">End tour</button></div>
+      </div>
       <div class="classsub" id="classSub" hidden><span class="dots"><i></i><i></i><i></i></span><span id="classSubText"></span></div>
       <div class="lowerthird" id="lowerThird" hidden><b>Bo's Kitchen</b><span id="ltLesson">Lesson 1: Chicken soup</span></div>
       <div class="skipcard" id="skipCard" hidden><svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13" fill="#f5f2ea"/><circle cx="15" cy="15" r="13" fill="none" stroke="#c9a25a" stroke-width="2"/><line class="hand" x1="15" y1="15" x2="15" y2="6" stroke="#2a2622" stroke-width="2.4" stroke-linecap="round"/><circle cx="15" cy="15" r="2" fill="#2a2622"/></svg><span id="skipText">Later</span></div>
@@ -1053,6 +1076,7 @@ button, input { font: inherit; color: inherit; }
 
     <footer class="aw-foot" id="awFoot">
       <button class="energy" id="energyBtn" type="button" aria-label="Bo's energy. Open snacks." aria-expanded="false"><span class="energy-bar"><i></i></span>Energy</button>
+      <button class="cook tourbtn" id="tourBtn" type="button" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.5" fill="#f0a820"/><path d="M8 6.2L14 10L8 13.8Z" fill="#1f1a10"/></svg>Take the tour</button>
       <button class="cook" id="cookBtn" type="button" aria-label="Cooking classes" aria-expanded="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 12C1 11 1 6 5 6C5 2 10 1 11 4C13 1 18 3 17 7C20 8 19 12 16 12Z" fill="#f5f2ea" stroke="#9a8f78" stroke-width="1"/><rect x="5" y="12" width="11" height="5" rx="1.5" fill="#f5f2ea" stroke="#9a8f78" stroke-width="1"/></svg>Cooking class</button>
       <div class="status" id="status"><span id="statusText">Starting up</span></div>
       <button class="brainchip" id="brainChip" type="button" aria-label="Bo's brain settings" aria-expanded="false"><span class="dot" aria-hidden="true"></span><span id="brainChipText">Scripted</span></button>
@@ -1474,7 +1498,7 @@ const B = {
   gLens: $('#gLens'), gLensArm: $('#gLensArm'), gLensHead: $('#gLensHead'),
 };
 const bo = {
-  x: 588, targetX: null, onArrive: null, dir: 1, speed: 44,
+  x: 588, targetX: null, onArrive: null, dir: 1, speed: 60, claim: null,
   energy: 0.85, mode: 'boot', mood: 'off', doing: 'getting its bearings', item: null, tool: 'wrench', bookRef: null,
   pose: { armL: 8, armR: -8, extL: 0, extR: 0, head: 0, sit: 1, perch: 30, ex: 0, ey: 0, lean: 0, turn: 0 },
   goal: { armL: 8, armR: -8, extL: 0, extR: 0, head: 0, sit: 1, perch: 30, ex: 0, ey: 0, lean: 0, turn: 0 },
@@ -1556,13 +1580,13 @@ function frame(t) {
   const dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0.016; lastT = t;
   let walking = false;
   if (bo.targetX != null) {
-    const sp = bo.hurry && bo.mode === 'free' ? Math.max(bo.speed, 80) : bo.speed, dx = bo.targetX - bo.x, step = sp * dt;
+    const sp = bo.hurry && bo.mode === 'free' ? Math.max(bo.speed, 100) : bo.speed, dx = bo.targetX - bo.x, step = sp * dt;
     if (Math.abs(dx) <= step) { bo.x = bo.targetX; bo.targetX = null; const f = bo.onArrive; bo.onArrive = null; if (f) f(); }
     else { bo.x += Math.sign(dx) * step; bo.dir = Math.sign(dx); walking = true; }
   }
   bo.walking = walking;
   bo.goal.lean = walking ? 2.5 : 0;
-  if (walking) { bo.walkPhase += dt * 9 * clamp((bo.hurry && bo.mode === 'free' ? Math.max(bo.speed, 80) : bo.speed) / 44, 0.8, 2.2); bo.goal.turn = bo.dir; }
+  if (walking) { bo.walkPhase += dt * 9 * clamp((bo.hurry && bo.mode === 'free' ? Math.max(bo.speed, 100) : bo.speed) / 44, 0.8, 4.2); bo.goal.turn = bo.dir; }
   const kFast = 1 - Math.pow(0.0008, dt), kSlow = 1 - Math.pow(0.03, dt), kTurn = 1 - Math.pow(0.00002, dt);
   for (const key in bo.goal) {
     const k = key === 'turn' ? kTurn : (key === 'armL' || key === 'armR' || key === 'extL' || key === 'extR') ? kFast : kSlow;
@@ -1825,7 +1849,7 @@ function placeAt(node, a, gap, lean) {
 }
 let bubbleTimer = 0, bubbleHeld = false, subHeld = false, logHeld = false, touchHold = null;
 const classSub = $('#classSub'), classSubText = $('#classSubText');
-const subMode = () => cls.on && !clip.on;
+const subMode = () => cls.on && !clip.on && !tour.on;
 function showThinking() {
   clearTimeout(bubbleTimer);
   if (subMode()) { classSubText.textContent = ''; classSub.classList.add('thinking'); classSub.hidden = false; return; }
@@ -1870,7 +1894,9 @@ document.addEventListener('pointerdown', (e) => {
   if (!touchHold || e.pointerType === 'mouse' || touchHold[0].contains(e.target)) return;
   const [, hold] = touchHold; touchHold = null; hold(false);
 }, true);
-const readTime = (t) => clamp(1700 + (t || '').length * 55, 2600, 9500);
+const readTime = (t) => clamp(2200 + (t || '').length * 62, 3200, 11000);
+const readPause = (t) => clamp(900 + (t || '').length * 32, 1600, 4200) * (tour.on ? 1.3 : 1);
+function baseSpeed() { return currentTod() === 'night' ? 46 : 60; }
 let logTimer = 0, lastLog = -1e9;
 function log(text, force) {
   if (!text) return;
@@ -1882,7 +1908,7 @@ function log(text, force) {
     return;
   }
   logline.textContent = text; logline.classList.add('show');
-  clearTimeout(logTimer); logTimer = setTimeout(() => { if (!logHeld) logline.classList.remove('show'); }, clamp(2200 + text.length * 40, 3000, 6000));
+  clearTimeout(logTimer); logTimer = setTimeout(() => { if (!logHeld) logline.classList.remove('show'); }, clamp(2600 + text.length * 48, 3500, 7500));
 }
 function announce(t) { srLive.textContent = ''; setTimeout(() => { srLive.textContent = 'Bo: ' + t; }, 40); }
 let sayGen = 0;
@@ -1893,7 +1919,7 @@ async function typeOut(text) {
   else {
     setBubbleText('');
     const t0 = now(); let n = 0;
-    while (n < text.length) { await sleep(28); if (gen !== sayGen) return prev; n = Math.min(text.length, Math.ceil((now() - t0) / 1000 * 46)); setBubbleText(text.slice(0, n)); }
+    while (n < text.length) { await sleep(28); if (gen !== sayGen) return prev; n = Math.min(text.length, Math.ceil((now() - t0) / 1000 * (tour.on ? 30 : 38))); setBubbleText(text.slice(0, n)); }
   }
   bo.talking = false;
   return prev;
@@ -1906,7 +1932,7 @@ async function say(text, hold) {
   if (gen !== sayGen) return;
   setExpr(['talk', 'think', 'off', 'boot', 'wide', 'surprised'].includes(prev) ? 'normal' : prev); antenna('slow');
   announce(text); speak(text);
-  hideBubbleLater(hold || readTime(text));
+  hideBubbleLater((hold || readTime(text)) * (tour.on ? 1.4 : 1));
 }
 // what an activity says: out loud when you asked for it, as a quiet status line when Bo did it on its own
 function report(line, req) { if (req === true) return say(line); log(line, !!req); return Promise.resolve(); }
@@ -1952,6 +1978,7 @@ async function walkTo(x, tok) {
   });
 }
 function interrupt() {
+  bo.claim = null;
   if (activity) { const a = activity; activity = null; a.cancel(); }
   bo.targetX = null; bo.onArrive = null; stopWeld(); resetArms();
   if (bo.bookRef) { bo.bookRef.g.style.display = ''; bo.bookRef.out = false; bo.bookRef = null; }
@@ -2001,11 +2028,11 @@ function chooseActivity() {
 }
 async function lifeLoop() {
   for (;;) {
-    if (bo.mode !== 'free') { await sleep(300); continue; }
+    if (bo.mode !== 'free' || tour.on) { await sleep(300); continue; }
     const tok = makeTok(); activity = tok;
     bo.hurry = !!forceNext;
     try { await chooseActivity()(tok); } catch (err) { console.error(err); }
-    bo.hurry = false;
+    bo.hurry = false; bo.claim = null;
     if (activity === tok) activity = null;
     await sleep(tok.c ? 150 : rand(600, 1400));
   }
@@ -2258,6 +2285,7 @@ async function actRead(tok, req) {
     apt.lamp = true; renderLighting(); resetArmL();
     await wait(250, tok); if (tok.c) return;
   }
+  bo.claim = 'chair'; catMakeRoom();
   await walkTo(343, tok); if (tok.c) return;
   faceFront();
   bo.goal.perch = 50; bo.goal.sit = 1;
@@ -2342,6 +2370,7 @@ async function actInspect(tok) {
 }
 async function actSit(tok, req) {
   setDoing('Sitting in the armchair', 'sitting in the armchair');
+  bo.claim = 'chair'; catMakeRoom();
   await walkTo(343, tok); if (tok.c) return;
   faceFront(); bo.goal.perch = 50; bo.goal.sit = 1; bo.goal.head = 3; setExpr('content');
   if (req) report(pick(['Sitting. Good chair.', "Chair's still warm. From the lamp."]), true);
@@ -3095,6 +3124,7 @@ function renderCard() {
   $('#rToggle').textContent = cls.expanded ? 'Less' : 'Recipe';
   const sw = stage.getBoundingClientRect().width, compact = sw < 720 && !cls.expanded;
   stage.classList.toggle('narrow', sw < 600);
+  if (tour.on && sw < 1100) recipe.hidden = true;
   recipe.classList.toggle('compact', compact);
   if (sw < 600) stage.style.setProperty('--rh', recipe.offsetHeight + 'px');
   const cur = $$('#rSteps li')[cls.step];
@@ -3107,6 +3137,7 @@ function showLowerThird(L) {
 }
 function rebuildTo(L, j) { resetKitchen(); L.setup(); for (let k = 0; k < j; k++) L.steps[k].apply(); renderKitchen(); }
 async function startClass(id) {
+  if (tour.on && !tour.allowClass) endTour();
   const L = LESSONS.find((x) => x.id === id);
   if (!L) return;
   closeFlyouts(); hideTip();
@@ -3118,14 +3149,14 @@ async function startClass(id) {
   interrupt(); hideBubbleNow(); forceNext = null;
   const my = ++cls.run;
   Object.assign(cls, { on: true, L, step: 0, paused: false, jump: null, intro: false });
-  bo.mode = 'class'; bo.speed = 80; gadget('hat', true);
+  bo.mode = 'class'; bo.speed = tour.on ? 180 : 80; gadget('hat', true);
   resetKitchen(); L.setup(); renderKitchen(); buildCard(L); renderCard(); showLowerThird(L);
   setDoing(`Teaching ${L.title.toLowerCase()}`, `teaching a cooking class in the kitchen: ${L.title.toLowerCase()}`);
   const tok0 = makeTok(); cls.tok = tok0; activity = tok0;
-  bo.speed = 120; cls.intro = true;
+  bo.speed = tour.on ? 200 : 120; cls.intro = true;
   const introSpeech = say(L.intro, readTime(L.intro) + 800);
   await walkTo(-300, tok0);
-  bo.speed = 80;
+  bo.speed = tour.on ? 180 : 80;
   if (!cls.on || cls.run !== my) return;
   if (!tok0.c) { faceFront(); setExpr('happy'); await introSpeech; await wait(700, tok0); }
   cls.intro = false;
@@ -3167,7 +3198,7 @@ function endClass(quiet) {
   cls.on = false; cls.run++;
   if (cls.tok) cls.tok.cancel();
   stopWeld(); resetArms(); gadget('hat', false); gadget('lens', false); gadget('scope', false);
-  bo.speed = currentTod() === 'night' ? 34 : 44;
+  bo.speed = baseSpeed();
   recipe.hidden = true; $('#lowerThird').hidden = true; $('#skipCard').hidden = true;
   kit.burners = [false, false]; kit.hood = false; kit.faucet = false; kit.carry = null; kit.fridgeOpen = false; kit.cabOpen = false;
   renderKitchen();
@@ -3516,6 +3547,7 @@ const CAT_SPOTS = {
   sill: { x: 590, y: 300, via: 'blanket' },
   bench: { x: 832, y: 396 },
   island: { x: -106, y: 394 },
+  armrest: { x: 395, y: 404 },
 };
 const CC = { fur: '#e4903c', dark: '#c46f24', cream: '#f6d9b0', nose: '#d9706a', eye: '#2a2622', ear: '#f2b8a0' };
 const cat = { x: 343, y: 430, dir: 1, pose: 'sleep', perch: 'chair', speed: 46, target: null, jump: null, phase: 0, blink: 2, swat: 0, purr: 0, eat: 0, hold: false, flee: false, called: false, counterDone: false, tok: null, hit: null };
@@ -3695,6 +3727,19 @@ async function catCounter(tok) {
   await catWait(700, tok);
   await catGoFloor(cat.x + 120, tok, 80);
 }
+// Bo is coming to sit: if the cat has the seat, it shifts over to the armrest
+function catMakeRoom() { if (cat.perch === 'chair') { cat.toArmrest = true; if (cat.tok) cat.tok.cancel(); } }
+async function catArmrest(tok) {
+  cat.toArmrest = false;
+  if (cat.perch === 'chair') { if (!(await catJump(CAT_SPOTS.armrest.x, CAT_SPOTS.armrest.y, tok))) return; cat.perch = 'armrest'; }
+  else if (!(await catGoPerch('armrest', tok))) return;
+  cat.dir = -1; cat.pose = 'sit';
+  await catWait(rand(2500, 4000), tok); if (tok.c) return;
+  if (bo.claim === 'chair') cat.pose = 'sleep';
+  const end = now() + rand(15000, 30000);
+  while (now() < end && !tok.c && bo.claim === 'chair') await sleep(150);
+  if (cat.pose === 'sleep') cat.pose = 'sit';
+}
 async function catFlee(tok) {
   cat.flee = false;
   await catGoFloor(cat.x + (bo.x > cat.x ? -1 : 1) * rand(140, 220), tok, 90);
@@ -3755,10 +3800,11 @@ async function catKitchen(tok) {
 function catChoose() {
   const day = !isDark(), tod = currentTod();
   if (cat.flee) return catFlee;
+  if (cat.toArmrest) return catArmrest;
   if (apt.catBowl > 0 && (cat.called || Math.random() < 0.5)) return catEat;
   if (cls.on && !cat.counterDone && Math.random() < 0.45) return catCounter;
   return weighted([
-    [catChair, 3], [catBlanket, bo.mode === 'nap' || bo.mode === 'napwalk' ? 0 : 2.4], [catSun, day && apt.blinds ? 3 : 0], [catSill, day ? 1.4 : 0.6],
+    [catChair, bo.claim === 'chair' ? 0 : 3], [catArmrest, bo.claim === 'chair' ? 2.5 : 0], [catBlanket, bo.mode === 'nap' || bo.mode === 'napwalk' ? 0 : 2.4], [catSun, day && apt.blinds ? 3 : 0], [catSill, day ? 1.4 : 0.6],
     [catWander, 2], [catFollow, cls.on ? 3 : 1.4], [catDust, apt.dust.length ? 1.8 : 0], [catBench, !apt.knocked && apt.project > 0.1 ? 0.9 : 0.2],
     [catKitchen, 0.8], [catZoomies, tod === 'evening' || tod === 'night' ? 0.7 : 0.15],
   ]);
@@ -3855,6 +3901,156 @@ function initCat() {
   catLoop();
 }
 
+/* ================= the 90-second tour: one click, Bo shows the whole idea ================= */
+const tour = { on: false, run: 0, step: 0, tok: null, noteId: null, allowClass: false, typing: false, lockNext: false };
+const TOUR_NOTE = 'Pitching investors this week', TOUR_SPEED = 180;
+const TOUR_LINES = [
+  'This is Bo. It lives here and keeps its own routine. Nobody asked it to fix that crack.',
+  'Talk to it. Tell Bo something about your life, and it pins it to the board.',
+  'It teaches real cooking classes, step by step, from real recipes.',
+  'Now leave for three weeks. Bo feels the time pass, the place ages, and it remembers what you said.',
+  'Energy is thinking. Replies cost a little, chores are free. When it runs dry, Bo naps until it gets a snack.',
+  "And there's a cat. Bo feeds it and looks after it. It's never your job.",
+];
+const tourCard = $('#tourCard'), tourText = $('#tourText'), tourStepEl = $('#tourStep'), tourNext = $('#tourNext'), tourEnd = $('#tourEnd'), tourWait = $('#tourWaitlist'), tourBtn = $('#tourBtn');
+function tourCaption(i) {
+  tour.step = i;
+  tourStepEl.textContent = `${i} of ${TOUR_LINES.length}`;
+  tourText.textContent = TOUR_LINES[i - 1];
+  tourCard.classList.remove('done'); tourWait.hidden = true; tourNext.hidden = false; tourEnd.textContent = 'End tour';
+  tourCard.hidden = clip.on;
+  tourNext.disabled = tour.lockNext;
+}
+async function tourHold(ms, tok) { const end = now() + ms; while (now() < end && !tok.c) await sleep(80); return !tok.c; }
+function tourSkipCard(text, ms) {
+  const card = $('#skipCard'); $('#skipText').textContent = text; card.hidden = false;
+  card.style.left = '50%'; card.style.top = '46%';
+  return sleep(ms).then(() => { card.hidden = true; });
+}
+function tourSettle() {
+  stopWeld(); resetArms(); gadget('lens', false); gadget('scope', false); holdItem(null);
+  if (bo.mode === 'nap' || bo.mode === 'napwalk') { setBlanket(false); bo.goal.perch = 0; bo.goal.sit = 0; }
+  bo.mode = 'tour'; faceFront(); restExpr(); antenna('slow'); renderGauge(); renderLighting();
+}
+
+/* ---------- the six beats ---------- */
+async function tourWork(tok) {
+  tourCaption(1);
+  let i = apt.cracks.findIndex((s) => s === 1);
+  if (i < 0) { i = [0, 1, 2, 3, 4].find((k) => apt.cracks[k] === 0); if (i == null) i = 0; apt.cracks[i] = 1; renderCracks(); }
+  await tourHold(900, tok); if (tok.c) return;
+  await actPatchCrack(tok, false, i);
+  await tourHold(900, tok);
+}
+async function tourTalk(tok) {
+  tourCaption(2);
+  faceFront(); setExpr('curious');
+  await tourHold(1200, tok); if (tok.c) return;
+  tour.typing = true;
+  for (let k = 1; k <= TOUR_NOTE.length + 1 && !tok.c; k++) { talkInput.value = (TOUR_NOTE + '.').slice(0, k); await sleep(45); }
+  tour.typing = false;
+  if (tok.c) { talkInput.value = ''; return; }
+  await sleep(350);
+  const from = talkInput.getBoundingClientRect(); talkInput.value = '';
+  await flyPacket(from, 'input'); perk();
+  await say("Big week. That's going on the board.", 2600); if (tok.c) return;
+  let n = addNote(TOUR_NOTE) || notesAll().find((x) => x.t === TOUR_NOTE);
+  if (n) { n.at = Date.now() - 120000; n.asked = 0; tour.noteId = n.id; }
+  if (n && !n.pinned) await actPin(tok);
+  await tourHold(900, tok);
+}
+async function tourCook(tok) {
+  tourCaption(3);
+  tour.allowClass = true; startClass('soup'); tour.allowClass = false;
+  await tourHold(18000, tok);
+  if (cls.on) endClass(true);
+}
+async function tourAway(tok) {
+  tour.lockNext = true; tourCaption(4);
+  await tourHold(1800, tok);
+  await tourSkipCard('Three weeks later', 1600);
+  await absence(21 * 24 * 3600e3);
+  tour.lockNext = false; tourNext.disabled = false;
+  await tourHold(800, tok);
+}
+async function tourEnergy(tok) {
+  tourCaption(5);
+  bo.mode = 'tour';
+  const from = bo.energy, t0 = now();
+  while (now() - t0 < 1500 && !tok.c) { setEnergy(from + (0.04 - from) * (now() - t0) / 1500); await sleep(60); }
+  setEnergy(0.04); if (tok.c) return;
+  setDoing('Heading to the dock', 'out of energy, walking to the charging dock');
+  setExpr('low');
+  await walkTo(588, tok); if (tok.c) return;
+  bo.mode = 'nap'; faceFront(); bo.goal.perch = 30; bo.goal.sit = 1; bo.goal.head = 6; setExpr('nap'); antenna('off'); setBlanket(true); renderGauge(); renderLighting();
+  setDoing('Napping on the dock', 'out of energy, napping on the dock');
+  await tourHold(2600, tok); if (tok.c) return;
+  bo.mode = 'tour'; setExpr('boot'); antenna('slow'); setBlanket(false); bo.goal.perch = 0; bo.goal.sit = 0; bo.goal.head = 0; renderGauge(); renderLighting();
+  await tourHold(800, tok); if (tok.c) return;
+  await actEat(tok, 0.75);
+  await tourHold(600, tok);
+}
+async function tourCat(tok) {
+  tourCaption(6);
+  catHoldStill(true);
+  const side = cat.x < bo.x ? -1 : 1;
+  await catGoFloor(clamp(bo.x + side * 48, CAT_MIN, CAT_MAX), { c: false }, 170);
+  cat.dir = -side; catSay('mrrp');
+  if (tok.c) { catHoldStill(false); return; }
+  await actPetCat(tok, true);
+  await tourHold(1200, tok);
+}
+const TOUR_BEATS = [tourWork, tourTalk, tourCook, tourAway, tourEnergy, tourCat];
+
+/* ---------- running it ---------- */
+async function startTour() {
+  if (tour.on) return;
+  closeFlyouts(); hideTip();
+  const my = ++tour.run;
+  tour.on = true; tour.noteId = null; tour.lockNext = false;
+  tourBtn.setAttribute('aria-pressed', 'true');
+  tourCard.hidden = clip.on; tourStepEl.textContent = 'Starting'; tourText.textContent = 'Getting Bo ready for the tour.'; tourNext.disabled = true; tourWait.hidden = true; tourNext.hidden = false;
+  if (cls.on) endClass(true);
+  while ((bo.mode === 'boot' || bo.mode === 'napwalk' || absenceRunning) && tour.run === my) await sleep(200);
+  if (tour.run !== my) return;
+  interrupt(); if (ctl) ctl.abort(); hideBubbleNow(); forceNext = null; busy = false; setSendState();
+  tourSettle(); setEnergy(Math.max(bo.energy, 0.6));
+  bo.speed = TOUR_SPEED;
+  for (let i = 0; i < TOUR_BEATS.length; i++) {
+    if (!tour.on || tour.run !== my) return;
+    const tok = makeTok(); tour.tok = tok;
+    try { await TOUR_BEATS[i](tok); } catch (err) { console.error(err); }
+    if (!tour.on || tour.run !== my) return;
+    tourSettle(); bo.speed = TOUR_SPEED;
+    await sleep(400);
+  }
+  if (!tour.on || tour.run !== my) return;
+  tourCard.classList.add('done');
+  tourStepEl.textContent = 'Your turn';
+  tourText.textContent = "That's Bo. Talk to it, click around, or take a full cooking class.";
+  tourNext.hidden = true; tourWait.hidden = false; tourEnd.textContent = 'Look around';
+  setExpr('happy'); say('Your turn.', 3000);
+}
+function endTour() {
+  if (!tour.on) return;
+  tour.on = false; tour.run++;
+  if (tour.tok) tour.tok.cancel();
+  if (tour.typing) { talkInput.value = ''; tour.typing = false; }
+  if (cls.on) endClass(true);
+  $('#skipCard').hidden = true; tourCard.hidden = true;
+  tourBtn.setAttribute('aria-pressed', 'false');
+  if (tour.noteId) { apt.notes = notesAll().filter((n) => n.id !== tour.noteId); tour.noteId = null; renderBoard(); renderBoardPanel(); saveSoon(); }
+  if (bo.energy < 0.3) setEnergy(0.6);
+  catHoldStill(false);
+  if (bo.mode === 'tour' || bo.mode === 'nap') { tourSettle(); bo.mode = 'free'; }
+  bo.speed = baseSpeed();
+  setDoing('Back to it', 'going about the day');
+}
+tourBtn.addEventListener('click', () => { if (tour.on) endTour(); else startTour(); });
+tourNext.addEventListener('click', () => { if (tour.on && !tour.lockNext && tour.tok) tour.tok.cancel(); });
+tourEnd.addEventListener('click', () => endTour());
+const wantTour = /(^|[?&#])tour\b/i.test(location.search.slice(1) + '&' + location.hash.slice(1));
+
 /* ================= energy, naps, snacks ================= */
 function renderGauge() {
   const e = bo.energy;
@@ -3899,6 +4095,7 @@ async function wake(line) {
   bo.mode = 'free';
 }
 function feedBo(amount) {
+  if (tour.on) endTour();
   closeFlyouts(); hideTip();
   const eat = (tok) => actEat(tok, amount);
   if (bo.mode === 'nap') { forceNext = eat; wake(); return; }
@@ -4021,10 +4218,10 @@ async function absence(ms) {
   bo.goal.turn = 1; await sleep(900); faceFront();
   setExpr(bucket === 'long' ? 'sad' : bucket === 'days' ? 'annoyed' : 'curious');
   const line = returnLine(bucket, list);
-  if (line) { await say(line); await sleep(1200); }
-  if (bucket !== 'short') { await say(pick([`${CatName()}'s fed. It slept on my dock most of the time.`, `${CatName()}'s fine. Fed and unbothered.`, `Cat report: fed, asleep, judging me.`])); await sleep(1100); }
+  if (line) { await say(line); await sleep(readPause(line)); }
+  if (bucket !== 'short') { await say(pick([`${CatName()}'s fed. It slept on my dock most of the time.`, `${CatName()}'s fine. Fed and unbothered.`, `Cat report: fed, asleep, judging me.`])); await sleep(readPause('fed and unbothered, more or less')); }
   const callback = noteCallback(bucket);
-  if (callback) { setExpr('curious'); await say(callback); await sleep(1400); }
+  if (callback) { setExpr('curious'); await say(callback); await sleep(readPause(callback)); }
   setExpr('squint');
   setDoing('Taking stock', 'just powered back up and taking stock of the apartment');
   absenceRunning = false;
@@ -4062,7 +4259,7 @@ function applyTod(src) {
   const t = currentTod(), changed = svg.getAttribute('data-tod') !== t;
   if (changed || src === 'init') {
     svg.setAttribute('data-tod', t); renderSky(); renderLighting();
-    bo.speed = t === 'night' ? 34 : 44;
+    if (!cls.on && !tour.on) bo.speed = baseSpeed();
     if (changed && src !== 'init' && bo.mode === 'free') log({ morning: 'Morning. Blinds, then the pipe.', day: 'Good light for welding.', evening: 'Getting dark.', night: 'Night shift.' }[t], true);
   }
   renderClock(); renderClockHands();
@@ -4117,6 +4314,7 @@ const CLASS_KEYS = { class_soup: 'soup', class_pancakes: 'pancakes', class_spagh
 const TAGS = Object.keys(ACTIONS).filter((k) => k !== 'clock').concat('snack', 'class_menu', ...Object.keys(CLASS_KEYS));
 function openLessons() { openFly(lessonFly, cookBtn); }
 function runAction(key, req) {
+  if (tour.on) endTour();
   if (CLASS_KEYS[key]) { startClass(CLASS_KEYS[key]); return; }
   if (key === 'class_menu') { openLessons(); return; }
   if (key === 'snack') { if (cls.on) { log('Snack after class.', true); return; } feedBo(0.4); return; }
@@ -4364,6 +4562,7 @@ async function respond(req) {
   else { statusText.textContent = 'Back to it'; bo.mode = 'free'; }
 }
 async function submit() {
+  if (tour.on) { if (tour.typing) return; endTour(); }
   const text = talkInput.value.trim();
   if (!text || busy) return;
   hideTip();
@@ -4732,6 +4931,7 @@ function showTip() {
 }
 function hideTip() { tip.hidden = true; userActed = true; }
 $('#tipClose').addEventListener('click', hideTip);
+$('#tipTour').addEventListener('click', () => { hideTip(); startTour(); });
 
 /* ---------- first boot + reset ---------- */
 async function firstBoot() {
@@ -4753,7 +4953,7 @@ async function firstBoot() {
   await say('Okay. Leak first.', 2000);
   await sleep(1300);
   faceFront(); forceNext = actFixLeak; bo.mode = 'free'; saveNow();
-  showTip();
+  if (!wantTour) showTip();
 }
 let resetArmedAt = 0;
 const resetBtn = $('#resetBtn');
@@ -4764,6 +4964,7 @@ resetBtn.addEventListener('click', () => {
     return;
   }
   resetArmedAt = 0; resetBtn.textContent = "Reset Bo's world"; closeFlyouts();
+  if (tour.on) endTour();
   if (cls.on) endClass(true);
   interrupt(); if (ctl) ctl.abort(); hideBubbleNow(); clearSaved(); resetKitchen();
   history.length = 0; felt = null; forceNext = null; busy = false; setSendState(); pictureNag = false;
@@ -4795,12 +4996,13 @@ function init() {
   picAngle = apt.tilt; $('#pictureFrame').setAttribute('transform', `rotate(${picAngle} 343 158)`);
   applyTod('init'); renderAll(); renderGauge(); renderKitchen(); renderBoard();
   fitWindow(); updateCam();
-  if (fresh) firstBoot();
+  if (fresh) firstBoot().then(() => { if (wantTour) startTour(); });
   else {
     bo.x = 480; bo.pose.perch = bo.goal.perch = 0; bo.pose.sit = bo.goal.sit = 0; setBlanket(false);
     bo.mode = 'free'; restExpr(); antenna('slow'); setDoing('Back at it', 'going about the day');
     if (gone >= MIN5) absence(gone);
     else if (bo.energy < 0.1) goNap();
+    if (wantTour) startTour();
   }
   setSendState();
   requestAnimationFrame(frame);

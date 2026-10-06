@@ -472,6 +472,24 @@ button, input { font: inherit; color: inherit; }
 .aw-stage.narrow .lowerthird b { font-size: 20px; }
 .aw-stage.narrow .lowerthird span { font-size: 13px; }
 .desktop.clip .recipe, .desktop.clip .lowerthird, .desktop.clip .classsub { display: none !important; }
+/* the tour */
+.tourbtn { border-color: rgba(240, 168, 32, 0.7); }
+.tourbtn[aria-pressed="true"] { background: #fbe3b0; }
+.tourcard { position: absolute; z-index: 7; top: 10px; left: 50%; transform: translateX(-50%); width: min(560px, calc(100% - 20px)); box-sizing: border-box; padding: 10px 14px 10px; border-radius: 12px; border-top: 3px solid var(--amber); background: rgba(20, 22, 26, 0.93); color: #fff; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35); }
+.tour-top { display: flex; justify-content: space-between; align-items: baseline; font: 700 12px/1.2 var(--ui-cond); letter-spacing: 0.06em; text-transform: uppercase; color: #ffd98f; }
+.tour-kicker { color: var(--amber); }
+.tourcard p { margin: 4px 0 8px; font: 600 16px/1.4 var(--ui); }
+.tour-actions { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
+.tour-actions button, .tour-actions a { padding: 6px 12px; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 7px; background: rgba(255, 255, 255, 0.08); color: #fff; font: 600 13px/1.2 var(--ui); text-decoration: none; cursor: pointer; }
+.tour-actions button:hover, .tour-actions a:hover { border-color: var(--amber); }
+.tour-actions button:disabled { opacity: 0.4; cursor: default; }
+.tour-actions a { background: var(--amber); border-color: var(--amber); color: #1f1a10; }
+.tourcard.done { border-top-color: #3fae6a; }
+.aw-stage.narrow .tourcard { top: 8px; padding: 8px 11px; }
+.aw-stage.narrow .tourcard p { font-size: 14px; }
+.desktop.clip .tourcard { display: none !important; }
+.tip-actions { display: flex; gap: 8px; }
+.tip .tip-quiet { background: transparent; color: #f1eee8; border: 1px solid rgba(255, 255, 255, 0.3); }
 /* brain chip, brain panel, board */
 .brainchip { flex: none; display: flex; align-items: center; gap: 7px; height: 34px; padding: 0 11px; border: 1px solid var(--chrome-line); border-radius: 8px; background: var(--btn); cursor: pointer; font: 600 13px/1 var(--ui); color: var(--ink); }
 .brainchip:hover { border-color: var(--amber); }

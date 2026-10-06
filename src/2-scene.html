@@ -493,8 +493,8 @@
       <div class="hoverlabel" id="hoverLabel" aria-hidden="true"></div>
       <div class="dropzone" id="dropzone" hidden><p>Drop it on Bo. Bo only reads the file's name.</p></div>
       <div class="tip" id="tip" role="note" hidden>
-        <p>Talk to Bo in the box below, or click things around the apartment.</p>
-        <button id="tipClose" type="button">Got it</button>
+        <p>New here? Take the 90-second tour, or talk to Bo and click things around the apartment.</p>
+        <div class="tip-actions"><button id="tipTour" type="button">Take the tour</button><button id="tipClose" class="tip-quiet" type="button">Look around</button></div>
       </div>
       <section class="recipe" id="recipe" aria-label="Recipe" hidden>
         <header><div class="r-kicker" id="rKicker">Bo's Kitchen, lesson 1</div><h2 id="rTitle">Chicken soup</h2><p class="r-meta" id="rMeta"></p></header>
@@ -502,6 +502,11 @@
         <div class="r-body" id="rBody"><h3>Ingredients</h3><ul id="rIngr"></ul><h3>Steps</h3><ol id="rSteps"></ol><p class="r-note" id="rNote"></p></div>
         <footer><button type="button" id="rBack">Back</button><button type="button" id="rPause">Pause</button><button type="button" id="rNext">Next</button><button type="button" class="r-toggle" id="rToggle">Recipe</button><button type="button" class="r-end" id="rEnd">End</button></footer>
       </section>
+      <div class="tourcard" id="tourCard" role="status" aria-live="polite" hidden>
+        <div class="tour-top"><span class="tour-kicker">Tour</span><span id="tourStep">1 of 6</span></div>
+        <p id="tourText"></p>
+        <div class="tour-actions"><button type="button" id="tourNext">Next</button><a id="tourWaitlist" href="https://bonini.biz" target="_blank" rel="noopener" hidden>Join the waitlist</a><button type="button" id="tourEnd">End tour</button></div>
+      </div>
       <div class="classsub" id="classSub" hidden><span class="dots"><i></i><i></i><i></i></span><span id="classSubText"></span></div>
       <div class="lowerthird" id="lowerThird" hidden><b>Bo's Kitchen</b><span id="ltLesson">Lesson 1: Chicken soup</span></div>
       <div class="skipcard" id="skipCard" hidden><svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13" fill="#f5f2ea"/><circle cx="15" cy="15" r="13" fill="none" stroke="#c9a25a" stroke-width="2"/><line class="hand" x1="15" y1="15" x2="15" y2="6" stroke="#2a2622" stroke-width="2.4" stroke-linecap="round"/><circle cx="15" cy="15" r="2" fill="#2a2622"/></svg><span id="skipText">Later</span></div>
@@ -514,6 +519,7 @@
 
     <footer class="aw-foot" id="awFoot">
       <button class="energy" id="energyBtn" type="button" aria-label="Bo's energy. Open snacks." aria-expanded="false"><span class="energy-bar"><i></i></span>Energy</button>
+      <button class="cook tourbtn" id="tourBtn" type="button" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.5" fill="#f0a820"/><path d="M8 6.2L14 10L8 13.8Z" fill="#1f1a10"/></svg>Take the tour</button>
       <button class="cook" id="cookBtn" type="button" aria-label="Cooking classes" aria-expanded="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 12C1 11 1 6 5 6C5 2 10 1 11 4C13 1 18 3 17 7C20 8 19 12 16 12Z" fill="#f5f2ea" stroke="#9a8f78" stroke-width="1"/><rect x="5" y="12" width="11" height="5" rx="1.5" fill="#f5f2ea" stroke="#9a8f78" stroke-width="1"/></svg>Cooking class</button>
       <div class="status" id="status"><span id="statusText">Starting up</span></div>
       <button class="brainchip" id="brainChip" type="button" aria-label="Bo's brain settings" aria-expanded="false"><span class="dot" aria-hidden="true"></span><span id="brainChipText">Scripted</span></button>

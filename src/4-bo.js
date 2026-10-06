@@ -15,7 +15,7 @@ const B = {
   gLens: $('#gLens'), gLensArm: $('#gLensArm'), gLensHead: $('#gLensHead'),
 };
 const bo = {
-  x: 588, targetX: null, onArrive: null, dir: 1, speed: 44,
+  x: 588, targetX: null, onArrive: null, dir: 1, speed: 60, claim: null,
   energy: 0.85, mode: 'boot', mood: 'off', doing: 'getting its bearings', item: null, tool: 'wrench', bookRef: null,
   pose: { armL: 8, armR: -8, extL: 0, extR: 0, head: 0, sit: 1, perch: 30, ex: 0, ey: 0, lean: 0, turn: 0 },
   goal: { armL: 8, armR: -8, extL: 0, extR: 0, head: 0, sit: 1, perch: 30, ex: 0, ey: 0, lean: 0, turn: 0 },
@@ -97,13 +97,13 @@ function frame(t) {
   const dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0.016; lastT = t;
   let walking = false;
   if (bo.targetX != null) {
-    const sp = bo.hurry && bo.mode === 'free' ? Math.max(bo.speed, 80) : bo.speed, dx = bo.targetX - bo.x, step = sp * dt;
+    const sp = bo.hurry && bo.mode === 'free' ? Math.max(bo.speed, 100) : bo.speed, dx = bo.targetX - bo.x, step = sp * dt;
     if (Math.abs(dx) <= step) { bo.x = bo.targetX; bo.targetX = null; const f = bo.onArrive; bo.onArrive = null; if (f) f(); }
     else { bo.x += Math.sign(dx) * step; bo.dir = Math.sign(dx); walking = true; }
   }
   bo.walking = walking;
   bo.goal.lean = walking ? 2.5 : 0;
-  if (walking) { bo.walkPhase += dt * 9 * clamp((bo.hurry && bo.mode === 'free' ? Math.max(bo.speed, 80) : bo.speed) / 44, 0.8, 2.2); bo.goal.turn = bo.dir; }
+  if (walking) { bo.walkPhase += dt * 9 * clamp((bo.hurry && bo.mode === 'free' ? Math.max(bo.speed, 100) : bo.speed) / 44, 0.8, 4.2); bo.goal.turn = bo.dir; }
   const kFast = 1 - Math.pow(0.0008, dt), kSlow = 1 - Math.pow(0.03, dt), kTurn = 1 - Math.pow(0.00002, dt);
   for (const key in bo.goal) {
     const k = key === 'turn' ? kTurn : (key === 'armL' || key === 'armR' || key === 'extL' || key === 'extR') ? kFast : kSlow;
@@ -366,7 +366,7 @@ function placeAt(node, a, gap, lean) {
 }
 let bubbleTimer = 0, bubbleHeld = false, subHeld = false, logHeld = false, touchHold = null;
 const classSub = $('#classSub'), classSubText = $('#classSubText');
-const subMode = () => cls.on && !clip.on;
+const subMode = () => cls.on && !clip.on && !tour.on;
 function showThinking() {
   clearTimeout(bubbleTimer);
   if (subMode()) { classSubText.textContent = ''; classSub.classList.add('thinking'); classSub.hidden = false; return; }
@@ -411,7 +411,9 @@ document.addEventListener('pointerdown', (e) => {
   if (!touchHold || e.pointerType === 'mouse' || touchHold[0].contains(e.target)) return;
   const [, hold] = touchHold; touchHold = null; hold(false);
 }, true);
-const readTime = (t) => clamp(1700 + (t || '').length * 55, 2600, 9500);
+const readTime = (t) => clamp(2200 + (t || '').length * 62, 3200, 11000);
+const readPause = (t) => clamp(900 + (t || '').length * 32, 1600, 4200) * (tour.on ? 1.3 : 1);
+function baseSpeed() { return currentTod() === 'night' ? 46 : 60; }
 let logTimer = 0, lastLog = -1e9;
 function log(text, force) {
   if (!text) return;
@@ -423,7 +425,7 @@ function log(text, force) {
     return;
   }
   logline.textContent = text; logline.classList.add('show');
-  clearTimeout(logTimer); logTimer = setTimeout(() => { if (!logHeld) logline.classList.remove('show'); }, clamp(2200 + text.length * 40, 3000, 6000));
+  clearTimeout(logTimer); logTimer = setTimeout(() => { if (!logHeld) logline.classList.remove('show'); }, clamp(2600 + text.length * 48, 3500, 7500));
 }
 function announce(t) { srLive.textContent = ''; setTimeout(() => { srLive.textContent = 'Bo: ' + t; }, 40); }
 let sayGen = 0;
@@ -434,7 +436,7 @@ async function typeOut(text) {
   else {
     setBubbleText('');
     const t0 = now(); let n = 0;
-    while (n < text.length) { await sleep(28); if (gen !== sayGen) return prev; n = Math.min(text.length, Math.ceil((now() - t0) / 1000 * 46)); setBubbleText(text.slice(0, n)); }
+    while (n < text.length) { await sleep(28); if (gen !== sayGen) return prev; n = Math.min(text.length, Math.ceil((now() - t0) / 1000 * (tour.on ? 30 : 38))); setBubbleText(text.slice(0, n)); }
   }
   bo.talking = false;
   return prev;
@@ -447,7 +449,7 @@ async function say(text, hold) {
   if (gen !== sayGen) return;
   setExpr(['talk', 'think', 'off', 'boot', 'wide', 'surprised'].includes(prev) ? 'normal' : prev); antenna('slow');
   announce(text); speak(text);
-  hideBubbleLater(hold || readTime(text));
+  hideBubbleLater((hold || readTime(text)) * (tour.on ? 1.4 : 1));
 }
 // what an activity says: out loud when you asked for it, as a quiet status line when Bo did it on its own
 function report(line, req) { if (req === true) return say(line); log(line, !!req); return Promise.resolve(); }
@@ -493,6 +495,7 @@ async function walkTo(x, tok) {
   });
 }
 function interrupt() {
+  bo.claim = null;
   if (activity) { const a = activity; activity = null; a.cancel(); }
   bo.targetX = null; bo.onArrive = null; stopWeld(); resetArms();
   if (bo.bookRef) { bo.bookRef.g.style.display = ''; bo.bookRef.out = false; bo.bookRef = null; }
@@ -542,11 +545,11 @@ function chooseActivity() {
 }
 async function lifeLoop() {
   for (;;) {
-    if (bo.mode !== 'free') { await sleep(300); continue; }
+    if (bo.mode !== 'free' || tour.on) { await sleep(300); continue; }
     const tok = makeTok(); activity = tok;
     bo.hurry = !!forceNext;
     try { await chooseActivity()(tok); } catch (err) { console.error(err); }
-    bo.hurry = false;
+    bo.hurry = false; bo.claim = null;
     if (activity === tok) activity = null;
     await sleep(tok.c ? 150 : rand(600, 1400));
   }
@@ -799,6 +802,7 @@ async function actRead(tok, req) {
     apt.lamp = true; renderLighting(); resetArmL();
     await wait(250, tok); if (tok.c) return;
   }
+  bo.claim = 'chair'; catMakeRoom();
   await walkTo(343, tok); if (tok.c) return;
   faceFront();
   bo.goal.perch = 50; bo.goal.sit = 1;
@@ -883,6 +887,7 @@ async function actInspect(tok) {
 }
 async function actSit(tok, req) {
   setDoing('Sitting in the armchair', 'sitting in the armchair');
+  bo.claim = 'chair'; catMakeRoom();
   await walkTo(343, tok); if (tok.c) return;
   faceFront(); bo.goal.perch = 50; bo.goal.sit = 1; bo.goal.head = 3; setExpr('content');
   if (req) report(pick(['Sitting. Good chair.', "Chair's still warm. From the lamp."]), true);
