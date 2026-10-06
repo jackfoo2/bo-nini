@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.2 (2026-10-06)
+
+- **Quicker on long walks.** Bo picks up speed when it has far to go and slows down as it arrives, so short steps stay calm. Crossing the apartment takes about half as long: workbench to the cat's bowl went from 15 seconds to 7, or under 5 when you ask Bo to do something.
+
 ## v0.6.1 (2026-09-30)
 
 - **Faster Bo.** Bo walks faster everywhere, and much faster during the tour.

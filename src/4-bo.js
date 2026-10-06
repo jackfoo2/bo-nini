@@ -15,7 +15,7 @@ const B = {
   gLens: $('#gLens'), gLensArm: $('#gLensArm'), gLensHead: $('#gLensHead'),
 };
 const bo = {
-  x: 588, targetX: null, onArrive: null, dir: 1, speed: 60, claim: null,
+  x: 588, targetX: null, onArrive: null, dir: 1, speed: 70, curSpeed: 0, claim: null,
   energy: 0.85, mode: 'boot', mood: 'off', doing: 'getting its bearings', item: null, tool: 'wrench', bookRef: null,
   pose: { armL: 8, armR: -8, extL: 0, extR: 0, head: 0, sit: 1, perch: 30, ex: 0, ey: 0, lean: 0, turn: 0 },
   goal: { armL: 8, armR: -8, extL: 0, extR: 0, head: 0, sit: 1, perch: 30, ex: 0, ey: 0, lean: 0, turn: 0 },
@@ -97,13 +97,19 @@ function frame(t) {
   const dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0.016; lastT = t;
   let walking = false;
   if (bo.targetX != null) {
-    const sp = bo.hurry && bo.mode === 'free' ? Math.max(bo.speed, 100) : bo.speed, dx = bo.targetX - bo.x, step = sp * dt;
-    if (Math.abs(dx) <= step) { bo.x = bo.targetX; bo.targetX = null; const f = bo.onArrive; bo.onArrive = null; if (f) f(); }
+    // long walks speed up, short steps stay calm, and Bo eases off as it arrives
+    const dx = bo.targetX - bo.x, rem = Math.abs(dx);
+    const base = bo.hurry && bo.mode === 'free' ? Math.max(bo.speed, 110) : bo.speed;
+    const far = bo.mode === 'free' ? clamp(1 + (rem - 120) / 240, 1, 2.8) : 1;
+    const want = Math.min(280, base * far);
+    bo.curSpeed = (bo.curSpeed || 0) + (want - (bo.curSpeed || 0)) * (1 - Math.pow(0.02, dt));
+    const step = Math.max(bo.curSpeed, 18) * dt;
+    if (rem <= step) { bo.x = bo.targetX; bo.targetX = null; bo.curSpeed = 0; const f = bo.onArrive; bo.onArrive = null; if (f) f(); }
     else { bo.x += Math.sign(dx) * step; bo.dir = Math.sign(dx); walking = true; }
   }
   bo.walking = walking;
   bo.goal.lean = walking ? 2.5 : 0;
-  if (walking) { bo.walkPhase += dt * 9 * clamp((bo.hurry && bo.mode === 'free' ? Math.max(bo.speed, 100) : bo.speed) / 44, 0.8, 4.2); bo.goal.turn = bo.dir; }
+  if (walking) { bo.walkPhase += dt * 9 * clamp((bo.curSpeed || bo.speed) / 44, 0.8, 4.2); bo.goal.turn = bo.dir; }
   const kFast = 1 - Math.pow(0.0008, dt), kSlow = 1 - Math.pow(0.03, dt), kTurn = 1 - Math.pow(0.00002, dt);
   for (const key in bo.goal) {
     const k = key === 'turn' ? kTurn : (key === 'armL' || key === 'armR' || key === 'extL' || key === 'extR') ? kFast : kSlow;
@@ -413,7 +419,7 @@ document.addEventListener('pointerdown', (e) => {
 }, true);
 const readTime = (t) => clamp(2200 + (t || '').length * 62, 3200, 11000);
 const readPause = (t) => clamp(900 + (t || '').length * 32, 1600, 4200) * (tour.on ? 1.3 : 1);
-function baseSpeed() { return currentTod() === 'night' ? 46 : 60; }
+function baseSpeed() { return currentTod() === 'night' ? 54 : 70; }
 let logTimer = 0, lastLog = -1e9;
 function log(text, force) {
   if (!text) return;

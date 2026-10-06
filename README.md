@@ -62,7 +62,7 @@ The source is split into parts in `src/`. `build.sh` joins them back into `index
 
 ## Status
 
-v0.6.1, September 2026. An early preview: the art and behavior will keep changing.
+v0.6.2, October 2026. An early preview: the art and behavior will keep changing.
 
 ## License
 
