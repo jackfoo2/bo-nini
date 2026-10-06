@@ -11,7 +11,7 @@ This repo is an interactive **browser preview** of [Bo Nini](https://bonini.biz)
 ## What to try
 
 - **Take the tour.** One click, and Bo shows the whole idea in about 2 minutes.
-- **Turn the sound on.** Click the speaker at the top of the window for the drip, the welder, chopping, the cat, and Bo's talking blips.
+- **Turn the sound on.** Click the speaker at the top of the window. Bo talks out loud, the apartment has a quiet background hum, and you'll hear the drip, the welder, chopping and the cat. The same panel has the volume, mute, and a choice of Bo's voice (spoken, beeps or off). M mutes from anywhere.
 - **Talk to Bo.** Tell it about something you're working on. Bo pins it to the corkboard in its kitchen and may ask how it went after you've been away.
 - **Leave and come back.** Bo has a felt sense of time. The apartment ages while you're gone, and Bo reacts to how long it's been. The demo controls (the wrench in the taskbar) can simulate anything from 20 minutes to 3 weeks.
 - **Take a cooking class.** Three real recipes: chicken soup, fluffy pancakes, and spaghetti with tomato sauce. Hit **Cooking class** and Bo teaches it step by step, with the full recipe on a card.
@@ -64,7 +64,7 @@ The source is split into parts in `src/`. `build.sh` joins them back into `index
 
 ## Status
 
-v0.7.0, October 2026. An early preview: the art and behavior will keep changing.
+v0.8.0, October 2026. An early preview: the art and behavior will keep changing.
 
 ## License
 

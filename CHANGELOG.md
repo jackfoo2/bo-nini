@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.8.0 (2026-10-06)
+
+- **Bo talks out loud.** With sound on, Bo speaks its lines using your browser's voice while the words type out, and finishes talking before it moves on. In the sound panel, Bo's voice can be Spoken, Beeps or Off.
+- **Show or hide Bo's words.** While Bo can be heard, you can hide the speech bubbles. The words always come back when sound is off or the browser can't speak.
+- **Background sound.** A quiet room tone, plus faint street noise through the window that follows the time of day and the blinds. It has its own switch in the sound panel.
+- **The tour button pulses** until someone has taken the tour.
+
+## v0.7.1 (2026-10-06)
+
+- **Volume and mute.** The speaker at the top of the window opens a sound panel: a mute button, a volume slider, and a switch for Bo's talking sounds. Press M to mute or unmute from anywhere except while typing. Your settings are remembered.
+
 ## v0.7.0 (2026-10-06)
 
 - **Sound.** Little sounds, all made in the browser: the drip, the welder, chopping, sizzling, kibble, the cat's mrrp and purr, and Bo's talking blips. Off until you click the speaker at the top of the window, or "Sound on" in the tour.

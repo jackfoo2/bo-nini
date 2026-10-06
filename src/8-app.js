@@ -788,9 +788,16 @@ function updateCam() {
 
 /* ================= flyouts + demo controls ================= */
 const lessonFly = $('#lessonFly'), cookBtn = $('#cookBtn');
-const FLYS = [[aboutFly, startBtn], [snackFly, energyBtn], [dirFly, dirBtn], [lessonFly, cookBtn], [brainFly, brainChip], [boardFly, null]];
+const soundFly = $('#soundFly'), soundBtn = $('#soundBtn');
+const FLYS = [[aboutFly, startBtn], [snackFly, energyBtn], [dirFly, dirBtn], [lessonFly, cookBtn], [brainFly, brainChip], [boardFly, null], [soundFly, soundBtn]];
 function openFly(f, b) {
   closeFlyouts(); f.hidden = false; if (b) b.setAttribute('aria-expanded', 'true');
+  if (f === soundFly) {
+    const r = soundBtn.getBoundingClientRect();
+    f.style.right = 'auto'; f.style.bottom = 'auto';
+    f.style.left = clamp(r.right - f.offsetWidth, 8, window.innerWidth - f.offsetWidth - 8) + 'px';
+    f.style.top = Math.min(window.innerHeight - f.offsetHeight - 8, r.bottom + 8) + 'px';
+  }
   if (f === snackFly || f === lessonFly || f === brainFly) {
     const r = (f === snackFly ? energyBtn : f === lessonFly ? cookBtn : brainChip).getBoundingClientRect();
     if (r.width && !clip.on) f.style.maxHeight = Math.max(200, r.top - 16) + 'px';
@@ -804,7 +811,16 @@ startBtn.addEventListener('click', () => toggleFly(aboutFly, startBtn));
 energyBtn.addEventListener('click', () => toggleFly(snackFly, energyBtn));
 dirBtn.addEventListener('click', () => toggleFly(dirFly, dirBtn));
 cookBtn.addEventListener('click', () => toggleFly(lessonFly, cookBtn));
-document.addEventListener('pointerdown', (e) => { if (!e.target.closest('.flyout, #startBtn, #energyBtn, #dirBtn, #cookBtn, #brainChip')) closeFlyouts(); });
+document.addEventListener('pointerdown', (e) => { if (!e.target.closest('.flyout, #startBtn, #energyBtn, #dirBtn, #cookBtn, #brainChip, #soundBtn')) closeFlyouts(); });
+soundBtn.addEventListener('click', () => { if (soundFly.hidden) { sfx.sync(); openFly(soundFly, soundBtn); } else closeFlyouts(); });
+$('#sndMute').addEventListener('click', () => sfx.set(!sfx.on));
+$('#sndVol').addEventListener('input', (e) => sfx.setVolume(Number(e.target.value) / 100));
+$$('#sndVoice button').forEach((b) => b.addEventListener('click', () => { sfx.setVoiceMode(b.dataset.voice); if (voiceActive()) speak("This is my voice."); }));
+$('#sndWords').addEventListener('change', (e) => sfx.setWords(e.target.checked));
+$('#sndAmb').addEventListener('change', (e) => sfx.setAmbience(e.target.checked));
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey && !e.target.closest('input, textarea, select, [contenteditable="true"]')) { sfx.set(!sfx.on); }
+});
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { if (FLYS.some(([f]) => !f.hidden)) closeFlyouts(); else if (ctl) ctl.abort(); }
   if ((e.key === '`' || e.code === 'Backquote') && e.target !== talkInput && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); toggleFly(dirFly, dirBtn); }
@@ -845,16 +861,40 @@ function pickVoice() {
   const vs = window.speechSynthesis.getVoices();
   voice.v = vs.find((v) => /^en[-_]/i.test(v.lang) && /\b(daniel|fred|alex|male)\b/i.test(v.name)) || vs.find((v) => /^en/i.test(v.lang)) || null;
 }
+// Bo talks out loud when sound is on and the voice is set to Spoken; resolves when Bo is done talking
+function voiceActive() { return voice.ok && !voice.broken && sfx.audible && sfx.voiceMode === 'spoken'; }
+function wordsShown() { return sfx.words || !voiceActive(); }
 function speak(t) {
-  if (!voice.on || !voice.ok || !t) return;
-  try { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); if (voice.v) u.voice = voice.v; u.pitch = 0.55; u.rate = 1.03; window.speechSynthesis.speak(u); } catch (e) { /* speech unavailable */ }
+  if (!voiceActive() || !t) return Promise.resolve();
+  return new Promise((res) => {
+    let done = false;
+    const finish = () => { if (!done) { done = true; clearTimeout(timer); res(); } };
+    const timer = setTimeout(finish, 1200 + t.length * 72);
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(t.replace(/[\u201c\u201d]/g, '"'));
+      if (voice.v) u.voice = voice.v; u.pitch = 0.55; u.rate = 1.03; u.volume = Math.min(1, sfx.volume * 1.25);
+      u.onend = finish;
+      // if this browser can't actually speak, fall back to showing Bo's words
+      u.onerror = (e) => { if (e && e.error && !/interrupt|cancel/i.test(e.error)) { voice.broken = true; sfx.sync(); } finish(); };
+      window.speechSynthesis.speak(u);
+    } catch (e) { finish(); }
+  });
+}
+function onSoundChange() {
+  voice.on = voiceActive();
+  if (!voice.on && voice.ok) { try { window.speechSynthesis.cancel(); } catch (e) { /* speech unavailable */ } }
+  if (typeof voiceBtn !== 'undefined') voiceBtn.setAttribute('aria-pressed', String(sfx.voiceMode === 'spoken'));
+  if (!wordsShown()) { bubble.classList.remove('show'); classSub.hidden = true; }
 }
 const voiceBtn = $('#voiceBtn');
+if (!voice.ok) { const sb = $('#sndVoice button[data-voice="spoken"]'); sb.disabled = true; sb.title = "This browser can't speak."; }
 if (voice.ok) { pickVoice(); if (window.speechSynthesis.addEventListener) window.speechSynthesis.addEventListener('voiceschanged', pickVoice); }
 else { voiceBtn.disabled = true; voiceBtn.title = "This browser can't speak."; }
 voiceBtn.addEventListener('click', () => {
-  voice.on = !voice.on; voiceBtn.setAttribute('aria-pressed', String(voice.on));
-  if (voice.on) speak('Voice on.'); else if (voice.ok) window.speechSynthesis.cancel();
+  sfx.setVoiceMode(sfx.voiceMode === 'spoken' ? 'beeps' : 'spoken');
+  if (sfx.voiceMode === 'spoken' && !sfx.on) sfx.set(true);
+  if (voiceActive()) speak('Voice on.');
 });
 
 /* ---------- vertical clip frame for Shorts / TikTok ---------- */
@@ -953,6 +993,7 @@ function init() {
   } else { apt = freshApt(); apt.ceiling = isDark(); }
   picAngle = apt.tilt; $('#pictureFrame').setAttribute('transform', `rotate(${picAngle} 343 158)`);
   applyTod('init'); renderAll(); renderGauge(); renderKitchen(); renderBoard(); sfx.sync();
+  try { if (localStorage.getItem('bonini-toured') !== '1') tourBtn.classList.add('pulse'); } catch (e) { tourBtn.classList.add('pulse'); }
   $$('[data-sound-toggle]').forEach((b) => b.addEventListener('click', () => sfx.set(!sfx.on)));
   fitWindow(); updateCam();
   if (fresh) (wantTour ? quickBoot() : firstBoot()).then(() => { if (wantTour) startTour(); });

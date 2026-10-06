@@ -395,6 +395,7 @@ function showThinking() {
 }
 function setBubbleText(t) {
   clearTimeout(bubbleTimer);
+  if (!wordsShown()) { bubble.classList.remove('show', 'thinking'); classSub.hidden = true; if (clip.on) capBoText.textContent = ''; return; }
   if (subMode()) { bubble.classList.remove('show', 'thinking'); classSub.classList.remove('thinking'); classSubText.textContent = t; classSub.hidden = false; return; }
   bubble.classList.remove('thinking'); bubble.classList.add('show'); bubbleText.textContent = t; logline.classList.remove('show');
   if (clip.on) { capBo.classList.remove('thinking', 'is-log'); capBoText.textContent = t; }
@@ -456,7 +457,7 @@ async function typeOut(text) {
   else {
     setBubbleText('');
     const t0 = now(); let n = 0;
-    while (n < text.length) { await sleep(28); if (gen !== sayGen) return prev; n = Math.min(text.length, Math.ceil((now() - t0) / 1000 * (tour.on ? 30 : 38))); setBubbleText(text.slice(0, n)); if (!voice.on && /[aeiouy]/i.test(text[n - 1] || '')) sfx.play('blip', 70); }
+    while (n < text.length) { await sleep(28); if (gen !== sayGen) return prev; n = Math.min(text.length, Math.ceil((now() - t0) / 1000 * (tour.on ? 30 : 38))); setBubbleText(text.slice(0, n)); if (/[aeiouy]/i.test(text[n - 1] || '')) sfx.play('blip', 70); }
   }
   bo.talking = false;
   return prev;
@@ -465,11 +466,13 @@ async function say(text, hold) {
   if (!text) return;
   if (clip.on) capYou.textContent = '';
   const gen = sayGen + 1;
+  const spoken = speak(text);
   const prev = await typeOut(text);
   if (gen !== sayGen) return;
+  announce(text);
+  if (voiceActive()) { setExpr('talk'); bo.talking = true; await spoken; bo.talking = false; if (gen !== sayGen) return; }
   setExpr(['talk', 'think', 'off', 'boot', 'wide', 'surprised'].includes(prev) ? 'normal' : prev); antenna('slow');
-  announce(text); speak(text);
-  hideBubbleLater((hold || readTime(text)) * (tour.on ? 1.4 : 1));
+  hideBubbleLater((voiceActive() ? Math.min(hold || readTime(text), 2600) : (hold || readTime(text))) * (tour.on ? 1.4 : 1));
 }
 // what an activity says: out loud when you asked for it, as a quiet status line when Bo did it on its own
 function report(line, req) { if (req === true) return say(line); log(line, !!req); return Promise.resolve(); }

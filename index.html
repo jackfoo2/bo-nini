@@ -493,6 +493,20 @@ button, input { font: inherit; color: inherit; }
 .aw-ctrls .snd.on .snd-off { display: none; }
 .aw-ctrls .snd.on { color: var(--amber); }
 .tour-actions .tour-sound { margin-right: auto; }
+.soundfly { width: min(260px, calc(100vw - 16px)); }
+.soundfly .snd-main { width: 100%; margin: 4px 0 10px; padding: 9px 10px; border: 1px solid var(--amber); border-radius: 8px; background: var(--btn); color: var(--ink); font: 700 14px/1.2 var(--ui); cursor: pointer; }
+.soundfly .snd-main.muted { background: var(--amber); color: #1f1a10; }
+.snd-row { display: grid; grid-template-columns: auto 1fr 3.2em; align-items: center; gap: 8px; font: 600 12.5px/1.2 var(--os); color: var(--ink-soft); }
+.snd-row input[type="range"] { width: 100%; accent-color: var(--amber); }
+.snd-row output { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+.snd-label { margin: 12px 0 4px; font: 600 12.5px/1.2 var(--os); color: var(--ink-soft); }
+.soundfly .bf-check { margin-top: 10px; }
+.soundfly .bf-check input:disabled + * , .soundfly .bf-check:has(input:disabled) { opacity: 0.55; }
+.soundfly .note { margin: 4px 0 0; }
+/* the tour button pulses until someone has taken the tour */
+.tourbtn.pulse { animation: tourPulse 1.6s ease-in-out infinite; }
+@keyframes tourPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(240, 168, 32, 0); } 50% { box-shadow: 0 0 0 5px rgba(240, 168, 32, 0.5); background: #fde7b5; } }
+@media (prefers-reduced-motion: reduce) { .tourbtn.pulse { animation: none; box-shadow: 0 0 0 3px rgba(240, 168, 32, 0.5); } }
 .tour-actions .tour-sound.on { border-color: var(--amber); }
 .tour-arrow { position: fixed; z-index: 9999; width: 34px; height: 41px; pointer-events: none; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4)); }
 .tour-arrow svg { width: 100%; height: 100%; }
@@ -580,7 +594,7 @@ button, input { font: inherit; color: inherit; }
       <span class="aw-title">Bo Nini</span>
       <span class="aw-sub">Studio 2B</span>
       <div class="aw-ctrls">
-        <button id="soundBtn" class="snd" type="button" data-sound-toggle aria-pressed="false" aria-label="Sound" title="Sound"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4.4h2.1L5.8 2v8L3.1 7.6H1z" fill="currentColor"/><path class="snd-on" d="M7.7 4.1a2.8 2.8 0 0 1 0 3.8M9.2 2.7a4.9 4.9 0 0 1 0 6.6" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><path class="snd-off" d="M7.6 4.3l3 3.4M10.6 4.3l-3 3.4" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg></button>
+        <button id="soundBtn" class="snd" type="button" aria-pressed="false" aria-expanded="false" aria-label="Sound settings" title="Sound"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4.4h2.1L5.8 2v8L3.1 7.6H1z" fill="currentColor"/><path class="snd-on" d="M7.7 4.1a2.8 2.8 0 0 1 0 3.8M9.2 2.7a4.9 4.9 0 0 1 0 6.6" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><path class="snd-off" d="M7.6 4.3l3 3.4M10.6 4.3l-3 3.4" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg></button>
         <button id="awMin" type="button" aria-label="Minimize"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 6.5h10" stroke="currentColor" stroke-width="1.4"/></svg></button>
         <button id="awMax" type="button" aria-label="Maximize"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="1.5" y="1.5" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></button>
         <button id="awClose" type="button" aria-label="Close"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.4"/></svg></button>
@@ -1142,6 +1156,18 @@ button, input { font: inherit; color: inherit; }
 
   <div class="tour-arrow" id="tourArrow" aria-hidden="true" hidden><svg viewBox="0 0 40 48"><path d="M20 46L4 24h10V2h12v22h10z" fill="#f0a820" stroke="#1f1a10" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
 
+  <div class="flyout soundfly" id="soundFly" role="dialog" aria-label="Sound" hidden>
+    <h2>Sound</h2>
+    <button type="button" id="sndMute" class="snd-main">Turn sound on</button>
+    <label class="snd-row" for="sndVol"><span>Volume</span><input type="range" id="sndVol" min="0" max="100" step="1" value="65"><output id="sndVolOut" for="sndVol">65%</output></label>
+    <div class="snd-label">Bo's voice</div>
+    <div class="seg" id="sndVoice"><button type="button" data-voice="spoken" aria-pressed="true">Spoken</button><button type="button" data-voice="beeps" aria-pressed="false">Beeps</button><button type="button" data-voice="off" aria-pressed="false">Off</button></div>
+    <label class="bf-check"><input type="checkbox" id="sndWords" checked> Show Bo's words</label>
+    <p class="note" id="sndWordsNote">Bo's words always show while Bo can't be heard.</p>
+    <label class="bf-check"><input type="checkbox" id="sndAmb" checked> Background sound</label>
+    <p class="note">Press M to mute or unmute.</p>
+  </div>
+
   <div class="flyout lessons" id="lessonFly" role="dialog" aria-label="Cooking classes" hidden>
     <h2>Bo's Kitchen</h2>
     <p class="note" style="margin:0 0 10px !important">Real recipes. Bo teaches them step by step in the kitchen.</p>
@@ -1441,6 +1467,7 @@ const light = { ceilingGlow: 0, flickerOff: false, flickerT: 0 };
 const isDark = () => { const t = currentTod(); return t === 'evening' || t === 'night'; };
 function renderLighting() {
   const tod = currentTod(), lit = apt.ceiling && !apt.bulbDead;
+  try { sfx.scene(({ morning: 0.6, day: 1, evening: 0.7, night: 0.25 }[tod]) * (apt.blinds ? 1 : 0.4)); } catch (e) { /* sound not ready yet */ }
   let shade = BASE_SHADE[tod];
   if (lit) shade -= { morning: 0.06, day: 0, evening: 0.22, night: 0.36 }[tod];
   if (apt.lamp) shade -= { morning: 0.02, day: 0, evening: 0.07, night: 0.1 }[tod];
@@ -1500,15 +1527,22 @@ function restoreApt(s) {
 
 /* ================= sound: tiny synthesized effects, off until you turn them on ================= */
 const sfx = (() => {
-  const KEY = 'bonini-sound';
-  let ctx = null, master = null, on = false, nbuf = null;
-  const loops = {}, last = {};
-  try { on = localStorage.getItem(KEY) === '1'; } catch (e) { on = false; }
+  const KEY = 'bonini-sound', VKEY = 'bonini-volume', BKEY = 'bonini-blips', MKEY = 'bonini-voice', AKEY = 'bonini-ambience', WKEY = 'bonini-words';
+  let ctx = null, master = null, on = false, nbuf = null, bbuf = null, vol = 0.65, blips = true, voiceMode = 'spoken', ambOn = true, words = true, amb = null, city = 0.5;
+  const loops = {}, last = {}, played = {};
+  try {
+    on = localStorage.getItem(KEY) === '1';
+    const v = parseFloat(localStorage.getItem(VKEY)); if (Number.isFinite(v)) vol = Math.min(1, Math.max(0, v));
+    blips = localStorage.getItem(BKEY) !== '0';
+    const vm = localStorage.getItem(MKEY); if (vm === 'spoken' || vm === 'beeps' || vm === 'off') voiceMode = vm;
+    ambOn = localStorage.getItem(AKEY) !== '0'; words = localStorage.getItem(WKEY) !== '0';
+  } catch (e) { /* storage off */ }
+  const gainFor = (v) => 0.75 * v * v;
   function ensure() {
     if (!ctx) {
       const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
       try { ctx = new AC(); } catch (e) { return null; }
-      master = ctx.createGain(); master.gain.value = 0.5; master.connect(ctx.destination);
+      master = ctx.createGain(); master.gain.value = gainFor(vol); master.connect(ctx.destination);
     }
     if (ctx.state === 'suspended') ctx.resume().catch(() => {});
     return ctx;
@@ -1519,6 +1553,34 @@ const sfx = (() => {
     const d = nbuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     return nbuf;
   }
+  function brownBuf() {
+    if (bbuf) return bbuf;
+    bbuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+    const d = bbuf.getChannelData(0); let lastV = 0;
+    for (let i = 0; i < d.length; i++) { lastV = (lastV + 0.02 * (Math.random() * 2 - 1)) / 1.02; d[i] = lastV * 3.5; }
+    return bbuf;
+  }
+  // background: a quiet room tone, plus faint city through the window that swells now and then
+  function ambStart() {
+    if (!on || !ambOn || amb || vol <= 0 || !ensure() || ctx.state !== 'running') return;
+    const t = ctx.currentTime;
+    const room = ctx.createBufferSource(), rf = ctx.createBiquadFilter(), rg = ctx.createGain();
+    room.buffer = brownBuf(); room.loop = true; rf.type = 'lowpass'; rf.frequency.value = 420;
+    rg.gain.setValueAtTime(0.0001, t); rg.gain.linearRampToValueAtTime(0.05, t + 2);
+    room.connect(rf); rf.connect(rg); rg.connect(master); room.start(t);
+    const street = ctx.createBufferSource(), cf = ctx.createBiquadFilter(), cg = ctx.createGain(), swell = ctx.createOscillator(), sg = ctx.createGain();
+    street.buffer = noiseBuf(); street.loop = true; cf.type = 'bandpass'; cf.frequency.value = 650; cf.Q.value = 0.5;
+    cg.gain.setValueAtTime(0.0001, t); swell.frequency.value = 0.07; sg.gain.value = 0.005; swell.connect(sg); sg.connect(cg.gain);
+    street.connect(cf); cf.connect(cg); cg.connect(master); street.start(t); swell.start(t);
+    amb = { room, rg, street, cg, swell };
+    ambLevel();
+  }
+  function ambStop() {
+    if (!amb) return; const a = amb; amb = null;
+    try { const t = ctx.currentTime; [a.rg, a.cg].forEach((g) => { g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(Math.max(0.0001, g.gain.value), t); g.gain.linearRampToValueAtTime(0.0001, t + 0.6); }); a.room.stop(t + 0.7); a.street.stop(t + 0.7); a.swell.stop(t + 0.7); } catch (e) { /* already stopped */ }
+  }
+  function ambLevel() { if (amb) amb.cg.gain.setTargetAtTime(0.004 + 0.016 * city, ctx.currentTime, 1.5); }
+  function scene(level) { city = Math.min(1, Math.max(0, level)); ambLevel(); }
   function env(g, t, a, d, peak) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
   function tone(type, f0, f1, dur, vol, at) {
     const t = ctx.currentTime + (at || 0), o = ctx.createOscillator(), g = ctx.createGain();
@@ -1579,27 +1641,55 @@ const sfx = (() => {
     try { const t = ctx.currentTime; l.g.gain.cancelScheduledValues(t); l.g.gain.setValueAtTime(Math.max(0.0001, l.g.gain.value), t); l.g.gain.linearRampToValueAtTime(0.0001, t + 0.15); l.s.stop(t + 0.2); if (l.lfo) l.lfo.stop(t + 0.2); } catch (e) { /* already stopped */ }
   }
   function play(name, gap) {
-    if (!on || !S[name]) return;
+    if (!on || !S[name] || vol <= 0) return;
+    if (name === 'blip' && voiceMode !== 'beeps') return;
     if (gap) { const n = performance.now(); if (n - (last[name] || 0) < gap) return; last[name] = n; }
     if (!ensure() || ctx.state !== 'running') return;
-    try { S[name](); } catch (e) { /* sound is optional */ }
+    try { S[name](); played[name] = (played[name] || 0) + 1; } catch (e) { /* sound is optional */ }
   }
   function sync() {
-    document.querySelectorAll('[data-sound-toggle]').forEach((b) => {
-      b.setAttribute('aria-pressed', String(on)); b.classList.toggle('on', on);
+    const audible = on && vol > 0;
+    document.querySelectorAll('[data-sound-toggle], #soundBtn').forEach((b) => {
+      b.setAttribute('aria-pressed', String(audible)); b.classList.toggle('on', audible);
       if (b.dataset.label) b.textContent = on ? 'Sound off' : 'Sound on';
     });
+    const sb = document.getElementById('soundBtn'); if (sb) sb.setAttribute('aria-label', audible ? 'Sound on. Open sound settings' : 'Sound off. Open sound settings');
+    const m = document.getElementById('sndMute'); if (m) { m.textContent = on ? 'Mute' : 'Turn sound on'; m.classList.toggle('muted', !on); }
+    const r = document.getElementById('sndVol'); if (r && document.activeElement !== r) r.value = String(Math.round(vol * 100));
+    const o = document.getElementById('sndVolOut'); if (o) o.textContent = Math.round(vol * 100) + '%';
+    document.querySelectorAll('#sndVoice button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.voice === voiceMode)));
+    const w = document.getElementById('sndWords'); if (w) { w.checked = words; w.disabled = !(audible && voiceMode === 'spoken'); }
+    const a = document.getElementById('sndAmb'); if (a) a.checked = ambOn;
+    const n = document.getElementById('sndWordsNote'); if (n) n.hidden = audible && voiceMode === 'spoken';
+    if (typeof onSoundChange === 'function') onSoundChange();
   }
+  function setVolume(v) {
+    vol = Math.min(1, Math.max(0, v));
+    try { localStorage.setItem(VKEY, String(vol)); } catch (e) { /* storage off */ }
+    if (master) master.gain.setTargetAtTime(gainFor(vol), ctx.currentTime, 0.03);
+    if (vol > 0 && !on) set(true, true);
+    if (vol <= 0) ambStop(); else ambStart();
+    play('pin', 120);
+    sync();
+  }
+  function setBlips(v) { blips = !!v; try { localStorage.setItem(BKEY, blips ? '1' : '0'); } catch (e) { /* storage off */ } if (blips) play('blip'); sync(); }
+  function setVoiceMode(m) { voiceMode = m; try { localStorage.setItem(MKEY, m); } catch (e) { /* storage off */ } if (m === 'beeps') play('blip'); sync(); }
+  function setWords(v) { words = !!v; try { localStorage.setItem(WKEY, words ? '1' : '0'); } catch (e) { /* storage off */ } sync(); }
+  function setAmbience(v) { ambOn = !!v; try { localStorage.setItem(AKEY, ambOn ? '1' : '0'); } catch (e) { /* storage off */ } if (ambOn) ambStart(); else ambStop(); sync(); }
   function set(v, quiet) {
     on = !!v;
     try { localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) { /* storage off */ }
-    if (on) { ensure(); if (!quiet) setTimeout(() => play('chime'), 80); } else Object.keys(loops).forEach(stop);
+    if (on) { ensure(); if (!quiet) setTimeout(() => play('chime'), 80); setTimeout(ambStart, 200); } else { Object.keys(loops).forEach(stop); ambStop(); }
     sync();
   }
   // a saved "on" still needs one click or key press before the browser lets sound play
-  const unlock = () => { if (on) ensure(); window.removeEventListener('pointerdown', unlock, true); window.removeEventListener('keydown', unlock, true); };
+  const unlock = () => { if (on) { ensure(); setTimeout(ambStart, 200); } window.removeEventListener('pointerdown', unlock, true); window.removeEventListener('keydown', unlock, true); };
   window.addEventListener('pointerdown', unlock, true); window.addEventListener('keydown', unlock, true);
-  return { play, loop, stop, set, sync, get on() { return on; } };
+  // a background tab goes quiet
+  document.addEventListener('visibilitychange', () => { if (!ctx) return; if (document.hidden) ctx.suspend().catch(() => {}); else if (on) ctx.resume().catch(() => {}); });
+  return { play, loop, stop, set, sync, setVolume, setBlips, setVoiceMode, setWords, setAmbience, scene,
+    get on() { return on; }, get volume() { return vol; }, get blips() { return blips; }, get voiceMode() { return voiceMode; }, get words() { return words; }, get ambience() { return !!amb; },
+    get audible() { return on && vol > 0; }, get gain() { return master ? master.gain.value : null; }, played };
 })();
 
 /* ================= Bo ================= */
@@ -1998,6 +2088,7 @@ function showThinking() {
 }
 function setBubbleText(t) {
   clearTimeout(bubbleTimer);
+  if (!wordsShown()) { bubble.classList.remove('show', 'thinking'); classSub.hidden = true; if (clip.on) capBoText.textContent = ''; return; }
   if (subMode()) { bubble.classList.remove('show', 'thinking'); classSub.classList.remove('thinking'); classSubText.textContent = t; classSub.hidden = false; return; }
   bubble.classList.remove('thinking'); bubble.classList.add('show'); bubbleText.textContent = t; logline.classList.remove('show');
   if (clip.on) { capBo.classList.remove('thinking', 'is-log'); capBoText.textContent = t; }
@@ -2059,7 +2150,7 @@ async function typeOut(text) {
   else {
     setBubbleText('');
     const t0 = now(); let n = 0;
-    while (n < text.length) { await sleep(28); if (gen !== sayGen) return prev; n = Math.min(text.length, Math.ceil((now() - t0) / 1000 * (tour.on ? 30 : 38))); setBubbleText(text.slice(0, n)); if (!voice.on && /[aeiouy]/i.test(text[n - 1] || '')) sfx.play('blip', 70); }
+    while (n < text.length) { await sleep(28); if (gen !== sayGen) return prev; n = Math.min(text.length, Math.ceil((now() - t0) / 1000 * (tour.on ? 30 : 38))); setBubbleText(text.slice(0, n)); if (/[aeiouy]/i.test(text[n - 1] || '')) sfx.play('blip', 70); }
   }
   bo.talking = false;
   return prev;
@@ -2068,11 +2159,13 @@ async function say(text, hold) {
   if (!text) return;
   if (clip.on) capYou.textContent = '';
   const gen = sayGen + 1;
+  const spoken = speak(text);
   const prev = await typeOut(text);
   if (gen !== sayGen) return;
+  announce(text);
+  if (voiceActive()) { setExpr('talk'); bo.talking = true; await spoken; bo.talking = false; if (gen !== sayGen) return; }
   setExpr(['talk', 'think', 'off', 'boot', 'wide', 'surprised'].includes(prev) ? 'normal' : prev); antenna('slow');
-  announce(text); speak(text);
-  hideBubbleLater((hold || readTime(text)) * (tour.on ? 1.4 : 1));
+  hideBubbleLater((voiceActive() ? Math.min(hold || readTime(text), 2600) : (hold || readTime(text))) * (tour.on ? 1.4 : 1));
 }
 // what an activity says: out loud when you asked for it, as a quiet status line when Bo did it on its own
 function report(line, req) { if (req === true) return say(line); log(line, !!req); return Promise.resolve(); }
@@ -4188,6 +4281,7 @@ async function startTour() {
   closeFlyouts(); hideTip();
   const my = ++tour.run;
   tour.on = true; tour.noteId = null; tour.lockNext = false;
+  tourBtn.classList.remove('pulse'); try { localStorage.setItem('bonini-toured', '1'); } catch (e) { /* storage off */ }
   tourBtn.setAttribute('aria-pressed', 'true');
   tourCard.hidden = clip.on; tourStepEl.textContent = 'Starting'; tourText.textContent = 'Getting Bo ready for the tour.'; tourNext.disabled = true; tourWait.hidden = true; tourNext.hidden = false;
   if (cls.on) endClass(true);
@@ -5020,9 +5114,16 @@ function updateCam() {
 
 /* ================= flyouts + demo controls ================= */
 const lessonFly = $('#lessonFly'), cookBtn = $('#cookBtn');
-const FLYS = [[aboutFly, startBtn], [snackFly, energyBtn], [dirFly, dirBtn], [lessonFly, cookBtn], [brainFly, brainChip], [boardFly, null]];
+const soundFly = $('#soundFly'), soundBtn = $('#soundBtn');
+const FLYS = [[aboutFly, startBtn], [snackFly, energyBtn], [dirFly, dirBtn], [lessonFly, cookBtn], [brainFly, brainChip], [boardFly, null], [soundFly, soundBtn]];
 function openFly(f, b) {
   closeFlyouts(); f.hidden = false; if (b) b.setAttribute('aria-expanded', 'true');
+  if (f === soundFly) {
+    const r = soundBtn.getBoundingClientRect();
+    f.style.right = 'auto'; f.style.bottom = 'auto';
+    f.style.left = clamp(r.right - f.offsetWidth, 8, window.innerWidth - f.offsetWidth - 8) + 'px';
+    f.style.top = Math.min(window.innerHeight - f.offsetHeight - 8, r.bottom + 8) + 'px';
+  }
   if (f === snackFly || f === lessonFly || f === brainFly) {
     const r = (f === snackFly ? energyBtn : f === lessonFly ? cookBtn : brainChip).getBoundingClientRect();
     if (r.width && !clip.on) f.style.maxHeight = Math.max(200, r.top - 16) + 'px';
@@ -5036,7 +5137,16 @@ startBtn.addEventListener('click', () => toggleFly(aboutFly, startBtn));
 energyBtn.addEventListener('click', () => toggleFly(snackFly, energyBtn));
 dirBtn.addEventListener('click', () => toggleFly(dirFly, dirBtn));
 cookBtn.addEventListener('click', () => toggleFly(lessonFly, cookBtn));
-document.addEventListener('pointerdown', (e) => { if (!e.target.closest('.flyout, #startBtn, #energyBtn, #dirBtn, #cookBtn, #brainChip')) closeFlyouts(); });
+document.addEventListener('pointerdown', (e) => { if (!e.target.closest('.flyout, #startBtn, #energyBtn, #dirBtn, #cookBtn, #brainChip, #soundBtn')) closeFlyouts(); });
+soundBtn.addEventListener('click', () => { if (soundFly.hidden) { sfx.sync(); openFly(soundFly, soundBtn); } else closeFlyouts(); });
+$('#sndMute').addEventListener('click', () => sfx.set(!sfx.on));
+$('#sndVol').addEventListener('input', (e) => sfx.setVolume(Number(e.target.value) / 100));
+$$('#sndVoice button').forEach((b) => b.addEventListener('click', () => { sfx.setVoiceMode(b.dataset.voice); if (voiceActive()) speak("This is my voice."); }));
+$('#sndWords').addEventListener('change', (e) => sfx.setWords(e.target.checked));
+$('#sndAmb').addEventListener('change', (e) => sfx.setAmbience(e.target.checked));
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey && !e.target.closest('input, textarea, select, [contenteditable="true"]')) { sfx.set(!sfx.on); }
+});
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { if (FLYS.some(([f]) => !f.hidden)) closeFlyouts(); else if (ctl) ctl.abort(); }
   if ((e.key === '`' || e.code === 'Backquote') && e.target !== talkInput && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); toggleFly(dirFly, dirBtn); }
@@ -5077,16 +5187,40 @@ function pickVoice() {
   const vs = window.speechSynthesis.getVoices();
   voice.v = vs.find((v) => /^en[-_]/i.test(v.lang) && /\b(daniel|fred|alex|male)\b/i.test(v.name)) || vs.find((v) => /^en/i.test(v.lang)) || null;
 }
+// Bo talks out loud when sound is on and the voice is set to Spoken; resolves when Bo is done talking
+function voiceActive() { return voice.ok && !voice.broken && sfx.audible && sfx.voiceMode === 'spoken'; }
+function wordsShown() { return sfx.words || !voiceActive(); }
 function speak(t) {
-  if (!voice.on || !voice.ok || !t) return;
-  try { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); if (voice.v) u.voice = voice.v; u.pitch = 0.55; u.rate = 1.03; window.speechSynthesis.speak(u); } catch (e) { /* speech unavailable */ }
+  if (!voiceActive() || !t) return Promise.resolve();
+  return new Promise((res) => {
+    let done = false;
+    const finish = () => { if (!done) { done = true; clearTimeout(timer); res(); } };
+    const timer = setTimeout(finish, 1200 + t.length * 72);
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(t.replace(/[\u201c\u201d]/g, '"'));
+      if (voice.v) u.voice = voice.v; u.pitch = 0.55; u.rate = 1.03; u.volume = Math.min(1, sfx.volume * 1.25);
+      u.onend = finish;
+      // if this browser can't actually speak, fall back to showing Bo's words
+      u.onerror = (e) => { if (e && e.error && !/interrupt|cancel/i.test(e.error)) { voice.broken = true; sfx.sync(); } finish(); };
+      window.speechSynthesis.speak(u);
+    } catch (e) { finish(); }
+  });
+}
+function onSoundChange() {
+  voice.on = voiceActive();
+  if (!voice.on && voice.ok) { try { window.speechSynthesis.cancel(); } catch (e) { /* speech unavailable */ } }
+  if (typeof voiceBtn !== 'undefined') voiceBtn.setAttribute('aria-pressed', String(sfx.voiceMode === 'spoken'));
+  if (!wordsShown()) { bubble.classList.remove('show'); classSub.hidden = true; }
 }
 const voiceBtn = $('#voiceBtn');
+if (!voice.ok) { const sb = $('#sndVoice button[data-voice="spoken"]'); sb.disabled = true; sb.title = "This browser can't speak."; }
 if (voice.ok) { pickVoice(); if (window.speechSynthesis.addEventListener) window.speechSynthesis.addEventListener('voiceschanged', pickVoice); }
 else { voiceBtn.disabled = true; voiceBtn.title = "This browser can't speak."; }
 voiceBtn.addEventListener('click', () => {
-  voice.on = !voice.on; voiceBtn.setAttribute('aria-pressed', String(voice.on));
-  if (voice.on) speak('Voice on.'); else if (voice.ok) window.speechSynthesis.cancel();
+  sfx.setVoiceMode(sfx.voiceMode === 'spoken' ? 'beeps' : 'spoken');
+  if (sfx.voiceMode === 'spoken' && !sfx.on) sfx.set(true);
+  if (voiceActive()) speak('Voice on.');
 });
 
 /* ---------- vertical clip frame for Shorts / TikTok ---------- */
@@ -5185,6 +5319,7 @@ function init() {
   } else { apt = freshApt(); apt.ceiling = isDark(); }
   picAngle = apt.tilt; $('#pictureFrame').setAttribute('transform', `rotate(${picAngle} 343 158)`);
   applyTod('init'); renderAll(); renderGauge(); renderKitchen(); renderBoard(); sfx.sync();
+  try { if (localStorage.getItem('bonini-toured') !== '1') tourBtn.classList.add('pulse'); } catch (e) { tourBtn.classList.add('pulse'); }
   $$('[data-sound-toggle]').forEach((b) => b.addEventListener('click', () => sfx.set(!sfx.on)));
   fitWindow(); updateCam();
   if (fresh) (wantTour ? quickBoot() : firstBoot()).then(() => { if (wantTour) startTour(); });

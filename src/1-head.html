@@ -493,6 +493,20 @@ button, input { font: inherit; color: inherit; }
 .aw-ctrls .snd.on .snd-off { display: none; }
 .aw-ctrls .snd.on { color: var(--amber); }
 .tour-actions .tour-sound { margin-right: auto; }
+.soundfly { width: min(260px, calc(100vw - 16px)); }
+.soundfly .snd-main { width: 100%; margin: 4px 0 10px; padding: 9px 10px; border: 1px solid var(--amber); border-radius: 8px; background: var(--btn); color: var(--ink); font: 700 14px/1.2 var(--ui); cursor: pointer; }
+.soundfly .snd-main.muted { background: var(--amber); color: #1f1a10; }
+.snd-row { display: grid; grid-template-columns: auto 1fr 3.2em; align-items: center; gap: 8px; font: 600 12.5px/1.2 var(--os); color: var(--ink-soft); }
+.snd-row input[type="range"] { width: 100%; accent-color: var(--amber); }
+.snd-row output { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+.snd-label { margin: 12px 0 4px; font: 600 12.5px/1.2 var(--os); color: var(--ink-soft); }
+.soundfly .bf-check { margin-top: 10px; }
+.soundfly .bf-check input:disabled + * , .soundfly .bf-check:has(input:disabled) { opacity: 0.55; }
+.soundfly .note { margin: 4px 0 0; }
+/* the tour button pulses until someone has taken the tour */
+.tourbtn.pulse { animation: tourPulse 1.6s ease-in-out infinite; }
+@keyframes tourPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(240, 168, 32, 0); } 50% { box-shadow: 0 0 0 5px rgba(240, 168, 32, 0.5); background: #fde7b5; } }
+@media (prefers-reduced-motion: reduce) { .tourbtn.pulse { animation: none; box-shadow: 0 0 0 3px rgba(240, 168, 32, 0.5); } }
 .tour-actions .tour-sound.on { border-color: var(--amber); }
 .tour-arrow { position: fixed; z-index: 9999; width: 34px; height: 41px; pointer-events: none; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4)); }
 .tour-arrow svg { width: 100%; height: 100%; }

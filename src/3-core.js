@@ -203,6 +203,7 @@ const light = { ceilingGlow: 0, flickerOff: false, flickerT: 0 };
 const isDark = () => { const t = currentTod(); return t === 'evening' || t === 'night'; };
 function renderLighting() {
   const tod = currentTod(), lit = apt.ceiling && !apt.bulbDead;
+  try { sfx.scene(({ morning: 0.6, day: 1, evening: 0.7, night: 0.25 }[tod]) * (apt.blinds ? 1 : 0.4)); } catch (e) { /* sound not ready yet */ }
   let shade = BASE_SHADE[tod];
   if (lit) shade -= { morning: 0.06, day: 0, evening: 0.22, night: 0.36 }[tod];
   if (apt.lamp) shade -= { morning: 0.02, day: 0, evening: 0.07, night: 0.1 }[tod];

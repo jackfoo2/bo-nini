@@ -139,6 +139,7 @@ async function startTour() {
   closeFlyouts(); hideTip();
   const my = ++tour.run;
   tour.on = true; tour.noteId = null; tour.lockNext = false;
+  tourBtn.classList.remove('pulse'); try { localStorage.setItem('bonini-toured', '1'); } catch (e) { /* storage off */ }
   tourBtn.setAttribute('aria-pressed', 'true');
   tourCard.hidden = clip.on; tourStepEl.textContent = 'Starting'; tourText.textContent = 'Getting Bo ready for the tour.'; tourNext.disabled = true; tourWait.hidden = true; tourNext.hidden = false;
   if (cls.on) endClass(true);
