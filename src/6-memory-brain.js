@@ -95,7 +95,7 @@ async function actPin(tok) {
   const [sx, sy] = SLOTS[slot];
   holdItem('letter'); reachR(sx, sy, 200);
   await wait(700, tok); if (tok.c) { holdItem(null); return; }
-  n.pinned = true; holdItem(null); renderBoard(n.id); renderBoardPanel(); saveSoon();
+  n.pinned = true; holdItem(null); renderBoard(n.id); renderBoardPanel(); saveSoon(); sfx.play('pin');
   bo.goal.extR = Math.max(0, bo.goal.extR - 8);
   await wait(220, tok);
   resetArms(); flashMood('content', 1300);

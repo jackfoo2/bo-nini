@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.7.0 (2026-10-06)
+
+- **Sound.** Little sounds, all made in the browser: the drip, the welder, chopping, sizzling, kibble, the cat's mrrp and purr, and Bo's talking blips. Off until you click the speaker at the top of the window, or "Sound on" in the tour.
+- **The tour zooms in.** The camera moves in close on each moment, then pulls back.
+- **The tour link starts right away.** `?tour` skips Bo's first boot, so the tour starts about a second after the page loads instead of eleven.
+- **How to give Bo a real brain.** A new last beat in the tour points at the brain button, then at the box where your AI key goes.
+
 ## v0.6.2 (2026-10-06)
 
 - **Quicker on long walks.** Bo picks up speed when it has far to go and slows down as it arrives, so short steps stay calm. Crossing the apartment takes about half as long: workbench to the cat's bowl went from 15 seconds to 7, or under 5 when you ask Bo to do something.

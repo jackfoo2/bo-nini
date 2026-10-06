@@ -129,6 +129,8 @@ function renderKitchen() {
   if (kit.plate && kit.carry !== 'plate') s += plateSVG(-108, 394, kit.plate.kind, kit.plate.n || 0);
   if (kit.serve) s += plateSVG(-126, 394, kit.serve, 4);
   $('#kitDyn').innerHTML = s;
+  if (kit.faucet) sfx.loop('water'); else sfx.stop('water');
+  if (kit.burners[0] || kit.burners[1]) sfx.loop('simmer'); else sfx.stop('simmer');
   $('#hoodLight').classList.toggle('on', kit.hood);
   setOp('gHood', kit.hood ? (isDark() ? 0.9 : 0.35) : 0);
   setOp('gFlame0', kit.burners[0] ? 0.9 : 0); setOp('gFlame1', kit.burners[1] ? 0.8 : 0);
@@ -210,7 +212,7 @@ async function kChop(tok, idxs, fine) {
     for (let k = 0; k < hits && !tok.c; k++) {
       reachR(x + 4, 366, 120); await wait(140, tok); if (tok.c) break;
       reachR(x + 4, 386, 120); await wait(120, tok); if (tok.c) break;
-      it.cut = Math.min(1, (it.cut || 0) + 1 / hits); renderKitchen();
+      it.cut = Math.min(1, (it.cut || 0) + 1 / hits); renderKitchen(); sfx.play('chop');
       tossBits(x + 2, 386, x + 6 + rand(-8, 8), 389, [CUTCOL[it.kind]], 2);
     }
     if (tok.c) break;
@@ -225,7 +227,7 @@ async function kBoardTo(tok, target) {
   if (!(await kGo(-392, -334, tok))) { kit.carry = null; renderKitchen(); return false; }
   const tx = target === 'pan' ? -288 : -334, ty = target === 'pan' ? 344 : 314;
   reachR(tx - 12, ty - 14, 150); await wait(520, tok); if (tok.c) { kit.carry = null; renderKitchen(); return false; }
-  const t = toolTip(34); tossBits(t.x + 14 * mirrorNow(), t.y + 6, tx, ty, cols.length ? cols : ['#f08a2c'], 12);
+  const t = toolTip(34); tossBits(t.x + 14 * mirrorNow(), t.y + 6, tx, ty, cols.length ? cols : ['#f08a2c'], 12); setTimeout(() => sfx.play('plop'), 420);
   await wait(300, tok);
   kit.board = []; kit.carry = null; renderKitchen(); resetArmR();
   await wait(300, tok); return !tok.c;
@@ -241,6 +243,7 @@ async function kStir(tok, where, ms, tool) {
 async function kBurner(tok, i, on, low) {
   if (!(await kGo(-392, i ? -288 : -350, tok))) return false;
   reachR(i ? -288 : -350, 359, 120); await wait(420, tok); if (tok.c) return false;
+  if (on && !kit.burners[i]) sfx.play('ignite');
   kit.burners[i] = on; kit.low[i] = !!low; kit.hood = kit.burners[0] || kit.burners[1]; renderKitchen(); resetArmR();
   await wait(250, tok); return !tok.c;
 }
@@ -275,6 +278,7 @@ async function kSprinkle(tok, tx, ty, cls, n) {
   resetArmR(); return !tok.c;
 }
 async function kPour(tok, tx, ty, cls, ms) {
+  sfx.play(cls === 'kibble' ? 'kibble' : 'pour', 300);
   const t0 = now();
   while (now() - t0 < ms && !tok.c) { const t = toolTip(36); streamDrop(t.x + 6 * mirrorNow(), t.y, tx + rand(-4, 4), ty, cls); await wait(40, tok); }
   return !tok.c;
@@ -291,6 +295,7 @@ async function kWash(tok, ms) {
   kit.faucet = false; renderKitchen(); resetArms(); return !tok.c;
 }
 async function kSkip(tok, text, apply) {
+  sfx.play('whoosh');
   const card = $('#skipCard'); $('#skipText').textContent = text; card.hidden = false;
   const a = stageXY(-300, 150);
   if (a && !clip.on) { card.style.left = clamp(a.x, card.offsetWidth / 2 + 8, a.w - card.offsetWidth / 2 - 8) + 'px'; card.style.top = clamp(a.y, card.offsetHeight / 2 + 8, a.h - card.offsetHeight / 2 - 8) + 'px'; }
@@ -302,6 +307,7 @@ async function kSkip(tok, text, apply) {
   return !tok.c;
 }
 async function flipCake(tok) {
+  sfx.play('flip');
   kit.pan.cake = 0; renderKitchen();
   const node = el('ellipse', { rx: 16, ry: 3.6, fill: '#ecd49a', cx: -288 }, fxLayer), t0 = now(), T = 700;
   while (now() - t0 < T && !tok.c) {

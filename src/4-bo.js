@@ -182,11 +182,7 @@ function frame(t) {
     if (light.flickerT <= 0) { light.flickerOff = !light.flickerOff && Math.random() < 0.7; light.flickerT = light.flickerOff ? rand(0.04, 0.14) : rand(0.08, 0.9); applyCeilingGlow(); }
   } else if (light.flickerOff) { light.flickerOff = false; applyCeilingGlow(); }
   updateParticles(dt);
-  if (cam.on) {
-    const half = cam.vbw / 2;
-    cam.x += (clamp(bo.x, WX0 + half, WX1 - half) - cam.x) * (1 - Math.pow(0.12, dt));
-    svg.setAttribute('viewBox', `${(cam.x - half).toFixed(1)} 0 ${cam.vbw.toFixed(1)} 540`);
-  }
+  camTick(dt);
   placeOverlays();
   requestAnimationFrame(frame);
 }
@@ -276,11 +272,12 @@ const weldGlow = el('circle', { r: 7, fill: 'url(#weldGrad)' }, fxLayer);
 beam.style.display = 'none'; weldGlow.style.display = 'none';
 const parts = [];
 function startWeld(p, soft) {
+  sfx.loop('weld');
   bo.welding = { x: p.x, y: p.y, soft: !!soft };
   beam.style.display = ''; beam.style.stroke = soft ? '#aee3ff' : ''; beam.style.strokeDasharray = soft ? '3 4' : '';
   weldGlow.style.display = soft ? 'none' : ''; weldGlow.setAttribute('cx', p.x); weldGlow.setAttribute('cy', p.y);
 }
-function stopWeld() { bo.welding = null; beam.style.display = 'none'; weldGlow.style.display = 'none'; }
+function stopWeld() { sfx.stop('weld'); bo.welding = null; beam.style.display = 'none'; weldGlow.style.display = 'none'; }
 function updateWeld() {
   const tip = toolTip(), w = bo.welding;
   beam.setAttribute('x1', tip.x.toFixed(1)); beam.setAttribute('y1', tip.y.toFixed(1));
@@ -325,7 +322,7 @@ function updateParticles(dt) {
         p.node.remove(); parts.splice(i, 1);
         if (apt.bucket < 1) apt.bucket = Math.min(1, apt.bucket + 0.004);
         else { apt.puddle = Math.min(1, apt.puddle + 0.006); renderPuddle(); splashAt(777 + rand(-10, 10), 452); }
-        renderBucket(); splashAt(p.x, surface);
+        renderBucket(); splashAt(p.x, surface); sfx.play('drip', 250);
         continue;
       }
       p.node.setAttribute('cx', p.x.toFixed(1)); p.node.setAttribute('cy', p.y.toFixed(1));
@@ -348,7 +345,24 @@ function updateParticles(dt) {
 
 /* ================= speech bubble, status line, captions ================= */
 const clip = { on: false };
-const cam = { on: false, x: 480, vbw: 960 };
+const cam = { on: false, x: 480, vbw: 960, zoom: 1, zoomGoal: 1, focus: 'bo', fx: 220, fy: 270, zoomed: false };
+// the camera: follows Bo on narrow screens, and can zoom in on a moment (the tour uses this)
+function camZoom(z, focus) { cam.zoomGoal = Math.max(1, z || 1); cam.focus = focus || 'bo'; }
+function camTick(dt) {
+  cam.zoom += (cam.zoomGoal - cam.zoom) * (1 - Math.pow(0.18, dt));
+  if (Math.abs(cam.zoom - cam.zoomGoal) < 0.002) cam.zoom = cam.zoomGoal;
+  const zooming = cam.zoom > 1.002;
+  if (!cam.on && !zooming) { if (cam.zoomed) { svg.setAttribute('viewBox', `${WX0} 0 ${WW} 540`); cam.zoomed = false; } return; }
+  if (!cam.on && !cam.zoomed) { cam.fx = WX0 + WW / 2; cam.fy = 270; }
+  const baseW = cam.on ? cam.vbw : WW, z = Math.min(cam.zoom, Math.max(1, baseW / 300));
+  const w = baseW / z, h = 540 / z;
+  const tx = cam.focus === 'bo' ? bo.x : cam.focus.x, ty = cam.focus === 'bo' ? rootY() - 78 : cam.focus.y;
+  const k = 1 - Math.pow(0.12, dt);
+  cam.fx += (tx - cam.fx) * k; cam.fy += (ty - cam.fy) * k; cam.x = cam.fx;
+  const x0 = clamp(cam.fx - w / 2, WX0, WX1 - w), y0 = clamp(cam.fy - h / 2, 0, 540 - h);
+  svg.setAttribute('viewBox', `${x0.toFixed(1)} ${y0.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
+  cam.zoomed = zooming;
+}
 function stageXY(wx, wy) {
   const m = svg.getScreenCTM(); if (!m) return null;
   const p = new DOMPoint(wx, wy).matrixTransform(m), r = stage.getBoundingClientRect();
@@ -442,7 +456,7 @@ async function typeOut(text) {
   else {
     setBubbleText('');
     const t0 = now(); let n = 0;
-    while (n < text.length) { await sleep(28); if (gen !== sayGen) return prev; n = Math.min(text.length, Math.ceil((now() - t0) / 1000 * (tour.on ? 30 : 38))); setBubbleText(text.slice(0, n)); }
+    while (n < text.length) { await sleep(28); if (gen !== sayGen) return prev; n = Math.min(text.length, Math.ceil((now() - t0) / 1000 * (tour.on ? 30 : 38))); setBubbleText(text.slice(0, n)); if (!voice.on && /[aeiouy]/i.test(text[n - 1] || '')) sfx.play('blip', 70); }
   }
   bo.talking = false;
   return prev;

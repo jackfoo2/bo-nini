@@ -161,6 +161,7 @@ async function catGoPerch(name, tok) {
 }
 async function catNap(ms, tok) { cat.pose = 'sleep'; const ok = await catWait(ms, tok); if (cat.pose === 'sleep') cat.pose = 'sit'; return ok; }
 function catSay(text) {
+  if (text) sfx.play('meow', 600);
   if (!catG || RM.matches) return;
   const t = el('text', { x: 0, y: cat.pose === 'sleep' ? -30 : -46, class: 'cat-say' }, catG); t.textContent = text;
   setTimeout(() => t.remove(), 1500);
@@ -307,7 +308,7 @@ async function actPetCat(tok, req) {
     for (let k = 0; k < 3 && !tok.c; k++) {
       reachR(cat.x - 6, cat.y - (cat.pose === 'sleep' ? 16 : 22), 190); await wait(380, tok);
       reachR(cat.x + 6, cat.y - (cat.pose === 'sleep' ? 15 : 20), 190); await wait(380, tok);
-      cat.purr = 2.4;
+      cat.purr = 2.4; sfx.play('purr', 1500);
     }
     resetArms(); if (tok.c) return;
     flashMood('happy', 1400);

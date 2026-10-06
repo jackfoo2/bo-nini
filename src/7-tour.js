@@ -1,5 +1,5 @@
 
-/* ================= the 90-second tour: one click, Bo shows the whole idea ================= */
+/* ================= the guided tour: one click, Bo shows the whole idea in about two minutes ================= */
 const tour = { on: false, run: 0, step: 0, tok: null, noteId: null, allowClass: false, typing: false, lockNext: false };
 const TOUR_NOTE = 'Pitching investors this week', TOUR_SPEED = 180;
 const TOUR_LINES = [
@@ -9,18 +9,20 @@ const TOUR_LINES = [
   'Now leave for three weeks. Bo feels the time pass, the place ages, and it remembers what you said.',
   'Energy is thinking. Replies cost a little, chores are free. When it runs dry, Bo naps until it gets a snack.',
   "And there's a cat. Bo feeds it and looks after it. It's never your job.",
+  "So far Bo's replies are scripted. To give Bo a real brain, click here and paste your own AI key. It stays in your browser.",
 ];
 const tourCard = $('#tourCard'), tourText = $('#tourText'), tourStepEl = $('#tourStep'), tourNext = $('#tourNext'), tourEnd = $('#tourEnd'), tourWait = $('#tourWaitlist'), tourBtn = $('#tourBtn');
-function tourCaption(i) {
+function tourCaption(i, text) {
   tour.step = i;
   tourStepEl.textContent = `${i} of ${TOUR_LINES.length}`;
-  tourText.textContent = TOUR_LINES[i - 1];
+  tourText.textContent = text || TOUR_LINES[i - 1];
   tourCard.classList.remove('done'); tourWait.hidden = true; tourNext.hidden = false; tourEnd.textContent = 'End tour';
   tourCard.hidden = clip.on;
   tourNext.disabled = tour.lockNext;
 }
 async function tourHold(ms, tok) { const end = now() + ms; while (now() < end && !tok.c) await sleep(80); return !tok.c; }
 function tourSkipCard(text, ms) {
+  sfx.play('whoosh');
   const card = $('#skipCard'); $('#skipText').textContent = text; card.hidden = false;
   card.style.left = '50%'; card.style.top = '46%';
   return sleep(ms).then(() => { card.hidden = true; });
@@ -33,15 +35,17 @@ function tourSettle() {
 
 /* ---------- the six beats ---------- */
 async function tourWork(tok) {
-  tourCaption(1);
-  let i = apt.cracks.findIndex((s) => s === 1);
-  if (i < 0) { i = [0, 1, 2, 3, 4].find((k) => apt.cracks[k] === 0); if (i == null) i = 0; apt.cracks[i] = 1; renderCracks(); }
+  tourCaption(1); camZoom(1.7);
+  // the crack nearest Bo, so the first beat isn't mostly walking
+  const near = (ks) => ks.sort((a, b) => Math.abs(CRACKS[a].x - bo.x) - Math.abs(CRACKS[b].x - bo.x))[0];
+  let i = near([0, 1, 2, 3, 4].filter((k) => apt.cracks[k] === 1));
+  if (i == null) { i = near([0, 1, 2, 3, 4].filter((k) => apt.cracks[k] === 0)); if (i == null) i = near([0, 1, 2, 3, 4]); apt.cracks[i] = 1; renderCracks(); }
   await tourHold(900, tok); if (tok.c) return;
   await actPatchCrack(tok, false, i);
   await tourHold(900, tok);
 }
 async function tourTalk(tok) {
-  tourCaption(2);
+  tourCaption(2); camZoom(2.1);
   faceFront(); setExpr('curious');
   await tourHold(1200, tok); if (tok.c) return;
   tour.typing = true;
@@ -58,21 +62,23 @@ async function tourTalk(tok) {
   await tourHold(900, tok);
 }
 async function tourCook(tok) {
-  tourCaption(3);
+  tourCaption(3); camZoom(1.6);
   tour.allowClass = true; startClass('soup'); tour.allowClass = false;
-  await tourHold(18000, tok);
+  await tourHold(15000, tok);
   if (cls.on) endClass(true);
 }
 async function tourAway(tok) {
-  tour.lockNext = true; tourCaption(4);
+  tour.lockNext = true; tourCaption(4); camZoom(1);
   await tourHold(1800, tok);
   await tourSkipCard('Three weeks later', 1600);
+  const zoomIn = setTimeout(() => { if (tour.on && tour.step === 4) camZoom(2.1); }, 6500);
   await absence(21 * 24 * 3600e3);
+  clearTimeout(zoomIn);
   tour.lockNext = false; tourNext.disabled = false;
   await tourHold(800, tok);
 }
 async function tourEnergy(tok) {
-  tourCaption(5);
+  tourCaption(5); camZoom(1.5);
   bo.mode = 'tour';
   const from = bo.energy, t0 = now();
   while (now() - t0 < 1500 && !tok.c) { setEnergy(from + (0.04 - from) * (now() - t0) / 1500); await sleep(60); }
@@ -89,7 +95,7 @@ async function tourEnergy(tok) {
   await tourHold(600, tok);
 }
 async function tourCat(tok) {
-  tourCaption(6);
+  tourCaption(6); camZoom(2.2);
   catHoldStill(true);
   const side = cat.x < bo.x ? -1 : 1;
   await catGoFloor(clamp(bo.x + side * 48, CAT_MIN, CAT_MAX), { c: false }, 170);
@@ -98,7 +104,34 @@ async function tourCat(tok) {
   await actPetCat(tok, true);
   await tourHold(1200, tok);
 }
-const TOUR_BEATS = [tourWork, tourTalk, tourCook, tourAway, tourEnergy, tourCat];
+// point a bouncing arrow at something on the page
+function pointAt(target, dir) {
+  const a = $('#tourArrow');
+  if (!target) { a.hidden = true; return; }
+  const r = target.getBoundingClientRect();
+  if (dir === 'right' && r.left < 56) dir = 'down';
+  a.className = 'tour-arrow ' + dir; a.hidden = false;
+  if (dir === 'right') { a.style.left = (r.left - 48) + 'px'; a.style.top = (r.top + r.height / 2 - 20) + 'px'; }
+  else { a.style.left = (r.left + r.width / 2 - 17) + 'px'; a.style.top = Math.max(4, r.top - 46) + 'px'; }
+}
+async function tourKey(tok) {
+  const here = onClaudeAi(), have = keyLive();
+  tourCaption(7, here ? "Here on claude.ai, Bo already thinks with Claude. On the public demo, this button is where you'd paste your own AI key."
+    : have ? "Bo is already thinking with your own AI key. This button is where you change it." : undefined);
+  camZoom(1);
+  await tourHold(900, tok); if (tok.c) return;
+  pointAt(brainChip, 'down');
+  await tourHold(3400, tok); if (tok.c) { pointAt(null); return; }
+  if (!here) {
+    fillBrainForm(); openFly(brainFly, brainChip);
+    await sleep(300);
+    pointAt(have ? brainChip : $('#bfKey'), have ? 'down' : 'right');
+    await tourHold(4600, tok);
+    closeFlyouts();
+  } else await tourHold(2600, tok);
+  pointAt(null);
+}
+const TOUR_BEATS = [tourWork, tourTalk, tourCook, tourAway, tourEnergy, tourCat, tourKey];
 
 /* ---------- running it ---------- */
 async function startTour() {
@@ -123,7 +156,7 @@ async function startTour() {
     await sleep(400);
   }
   if (!tour.on || tour.run !== my) return;
-  tourCard.classList.add('done');
+  tourCard.classList.add('done'); camZoom(1); pointAt(null);
   tourStepEl.textContent = 'Your turn';
   tourText.textContent = "That's Bo. Talk to it, click around, or take a full cooking class.";
   tourNext.hidden = true; tourWait.hidden = false; tourEnd.textContent = 'Look around';
@@ -135,7 +168,7 @@ function endTour() {
   if (tour.tok) tour.tok.cancel();
   if (tour.typing) { talkInput.value = ''; tour.typing = false; }
   if (cls.on) endClass(true);
-  $('#skipCard').hidden = true; tourCard.hidden = true;
+  $('#skipCard').hidden = true; tourCard.hidden = true; camZoom(1); pointAt(null);
   tourBtn.setAttribute('aria-pressed', 'false');
   if (tour.noteId) { apt.notes = notesAll().filter((n) => n.id !== tour.noteId); tour.noteId = null; renderBoard(); renderBoardPanel(); saveSoon(); }
   if (bo.energy < 0.3) setEnergy(0.6);

@@ -4,13 +4,14 @@ Bo is a small robot who lives in a studio apartment on your desktop. It keeps it
 
 This repo is an interactive **browser preview** of [Bo Nini](https://bonini.biz). It is not the desktop product. It's one web page that shows how Bo behaves.
 
-**Try it:** open the live demo from the link in the About box on this page, or download `index.html` and open it in any modern browser. New here? Hit **Take the tour** at the bottom of the window for the 90-second guided version, or add `?tour` to the end of the link to start the tour as soon as the page loads.
+**Try it:** open the live demo from the link in the About box on this page, or download `index.html` and open it in any modern browser. New here? Hit **Take the tour** at the bottom of the window for the 2-minute guided version, or add `?tour` to the end of the link to start the tour as soon as the page loads.
 
 ![Bo cooking chicken soup in its kitchen](docs/bo-kitchen.gif)
 
 ## What to try
 
-- **Take the tour.** One click, and Bo shows the whole idea in about 90 seconds.
+- **Take the tour.** One click, and Bo shows the whole idea in about 2 minutes.
+- **Turn the sound on.** Click the speaker at the top of the window for the drip, the welder, chopping, the cat, and Bo's talking blips.
 - **Talk to Bo.** Tell it about something you're working on. Bo pins it to the corkboard in its kitchen and may ask how it went after you've been away.
 - **Leave and come back.** Bo has a felt sense of time. The apartment ages while you're gone, and Bo reacts to how long it's been. The demo controls (the wrench in the taskbar) can simulate anything from 20 minutes to 3 weeks.
 - **Take a cooking class.** Three real recipes: chicken soup, fluffy pancakes, and spaghetti with tomato sauce. Hit **Cooking class** and Bo teaches it step by step, with the full recipe on a card.
@@ -53,6 +54,7 @@ The source is split into parts in `src/`. `build.sh` joins them back into `index
 | `src/1-head.html` | Page setup and all the styles |
 | `src/2-scene.html` | The desktop, the app window, and the apartment art |
 | `src/3-core.js` | Helpers, apartment state, lighting, saving |
+| `src/3-sound.js` | The sound effects, all synthesized in the browser |
 | `src/4-bo.js` | Bo's body, animation, speech, and daily routine |
 | `src/5-kitchen.js` | The kitchen and the three cooking classes |
 | `src/6-memory-brain.js` | The corkboard memory and the bring-your-own-key brain |
@@ -62,7 +64,7 @@ The source is split into parts in `src/`. `build.sh` joins them back into `index
 
 ## Status
 
-v0.6.2, October 2026. An early preview: the art and behavior will keep changing.
+v0.7.0, October 2026. An early preview: the art and behavior will keep changing.
 
 ## License
 

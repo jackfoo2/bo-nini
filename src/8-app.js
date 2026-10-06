@@ -34,7 +34,7 @@ async function goNap() {
 }
 async function wake(line) {
   if (bo.mode !== 'nap') return;
-  bo.mode = 'boot'; setExpr('boot'); antenna('slow'); setBlanket(false);
+  bo.mode = 'boot'; setExpr('boot'); antenna('slow'); setBlanket(false); sfx.play('chime');
   await sleep(700);
   bo.goal.head = 0; flashMood('happy', 1600); talkInput.placeholder = 'Talk to Bo'; renderGauge(); renderLighting();
   await sleep(350);
@@ -60,7 +60,7 @@ async function actEat(tok, amount) {
   await wait(350, tok); closeFridge(); if (tok.c) return;
   faceFront(); bo.goal.armR = normAngle(84.5, bo.pose.armR); bo.goal.extR = 0;
   await wait(550, tok);
-  feedGlow(); setExpr('happy');
+  feedGlow(); setExpr('happy'); sfx.play('crunch');
   const from = bo.energy, to = clamp(from + amount, 0, 1), t0 = now();
   while (now() - t0 < 900) { setEnergy(from + (to - from) * (now() - t0) / 900); await sleep(60); }
   setEnergy(to); setTool('wrench'); resetArms();
@@ -152,7 +152,7 @@ function feltContext() {
 async function absence(ms) {
   const bucket = bucketFor(ms);
   if (bucket === 'continuing' || absenceRunning) return;
-  absenceRunning = true;
+  absenceRunning = true; sfx.play('whoosh');
   if (cls.on) endClass(true);
   const list = changeList(timePasses(ms));
   felt = { bucket, list, turnsLeft: 3 };
@@ -535,6 +535,7 @@ talkInput.addEventListener('input', () => {
 talkInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); submit(); } });
 talkSend.addEventListener('click', submit);
 function flyPacket(fromRect, kind) {
+  if (kind === 'input') sfx.play('send');
   return new Promise((res) => {
     let r = fromRect;
     if (!r || (!r.width && !r.height)) r = talk.getBoundingClientRect();
@@ -882,6 +883,15 @@ $('#tipClose').addEventListener('click', hideTip);
 $('#tipTour').addEventListener('click', () => { hideTip(); startTour(); });
 
 /* ---------- first boot + reset ---------- */
+// arriving from a tour link: skip the slow first boot and get straight to it
+async function quickBoot() {
+  bo.mode = 'boot'; setDoing('Starting up', 'booting up');
+  bo.x = 588; bo.pose.perch = bo.goal.perch = 30; bo.pose.sit = bo.goal.sit = 1; setBlanket(true); setExpr('boot'); antenna('slow');
+  await sleep(450);
+  setBlanket(false); bo.goal.perch = 0; bo.goal.sit = 0; faceFront(); setExpr('happy'); sfx.play('chime');
+  await sleep(350);
+  bo.mode = 'free'; saveNow();
+}
 async function firstBoot() {
   bo.mode = 'boot'; setDoing('Starting up', 'booting up for the first time');
   bo.x = 588; bo.pose.perch = bo.goal.perch = 30; bo.pose.sit = bo.goal.sit = 1; bo.goal.head = 5; setBlanket(true);
@@ -942,14 +952,15 @@ function init() {
     fresh = false;
   } else { apt = freshApt(); apt.ceiling = isDark(); }
   picAngle = apt.tilt; $('#pictureFrame').setAttribute('transform', `rotate(${picAngle} 343 158)`);
-  applyTod('init'); renderAll(); renderGauge(); renderKitchen(); renderBoard();
+  applyTod('init'); renderAll(); renderGauge(); renderKitchen(); renderBoard(); sfx.sync();
+  $$('[data-sound-toggle]').forEach((b) => b.addEventListener('click', () => sfx.set(!sfx.on)));
   fitWindow(); updateCam();
-  if (fresh) firstBoot().then(() => { if (wantTour) startTour(); });
+  if (fresh) (wantTour ? quickBoot() : firstBoot()).then(() => { if (wantTour) startTour(); });
   else {
     bo.x = 480; bo.pose.perch = bo.goal.perch = 0; bo.pose.sit = bo.goal.sit = 0; setBlanket(false);
     bo.mode = 'free'; restExpr(); antenna('slow'); setDoing('Back at it', 'going about the day');
-    if (gone >= MIN5) absence(gone);
-    else if (bo.energy < 0.1) goNap();
+    if (gone >= MIN5 && !wantTour) absence(gone);
+    else if (bo.energy < 0.1 && !wantTour) goNap();
     if (wantTour) startTour();
   }
   setSendState();
