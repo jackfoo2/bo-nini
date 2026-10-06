@@ -855,11 +855,21 @@ $$('#brainBtns button').forEach((b) => b.addEventListener('click', () => {
 }));
 
 /* ---------- voice (browser speech, off by default) ---------- */
-const voice = { on: false, v: null, ok: 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function' };
+const voice = { on: false, v: null, pitch: 1, rate: 0.96, ok: 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function' };
 function pickVoice() {
   if (!voice.ok) return;
-  const vs = window.speechSynthesis.getVoices();
-  voice.v = vs.find((v) => /^en[-_]/i.test(v.lang) && /\b(daniel|fred|alex|male)\b/i.test(v.name)) || vs.find((v) => /^en/i.test(v.lang)) || null;
+  const vs = window.speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang));
+  // 1. a real robot voice if this computer has one (Mac ships Zarvox and Trinoids; Linux has eSpeak)
+  const robot = vs.find((v) => /zarvox|trinoids|robot|espeak/i.test(v.name));
+  if (robot) { voice.v = robot; voice.pitch = 1; voice.rate = 0.98; return; }
+  // 2. otherwise move an ordinary voice toward the middle: female voices down, male voices up
+  const maleRe = /\b(david|mark|daniel|fred|alex|male|guy|tom|james|ryan|george|aaron|arthur|oliver|eric|christopher|andrew|brian|roger|steffan)\b/i;
+  const femaleRe = /\b(female|zira|samantha|karen|moira|tessa|victoria|susan|hazel|aria|jenny|libby|sonia|allison|ava|serena|emma|michelle|catherine|fiona|kate)\b/i;
+  const fem = vs.find((v) => femaleRe.test(v.name) && !maleRe.test(v.name)) || vs.find((v) => /google (us|uk) english$/i.test(v.name));
+  if (fem) { voice.v = fem; voice.pitch = 0.74; voice.rate = 0.96; return; }
+  const male = vs.find((v) => maleRe.test(v.name));
+  if (male) { voice.v = male; voice.pitch = 1.32; voice.rate = 0.96; return; }
+  voice.v = vs[0] || null; voice.pitch = 0.9; voice.rate = 0.96;
 }
 // Bo talks out loud when sound is on and the voice is set to Spoken; resolves when Bo is done talking
 function voiceActive() { return voice.ok && !voice.broken && sfx.audible && sfx.voiceMode === 'spoken'; }
@@ -873,7 +883,7 @@ function speak(t) {
     try {
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(t.replace(/[\u201c\u201d]/g, '"'));
-      if (voice.v) u.voice = voice.v; u.pitch = 0.55; u.rate = 1.03; u.volume = Math.min(1, sfx.volume * 1.25);
+      if (voice.v) u.voice = voice.v; u.pitch = voice.pitch; u.rate = voice.rate; u.volume = Math.min(1, sfx.volume * 1.25);
       u.onend = finish;
       // if this browser can't actually speak, fall back to showing Bo's words
       u.onerror = (e) => { if (e && e.error && !/interrupt|cancel/i.test(e.error)) { voice.broken = true; sfx.sync(); } finish(); };

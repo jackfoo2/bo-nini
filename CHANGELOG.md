@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.8.1 (2026-10-06)
+
+- **A robot voice, not a man's or a woman's.** Bo uses a real robot voice where the computer has one (Zarvox on a Mac, eSpeak on Linux). Otherwise it takes the computer's usual voice and moves its pitch toward the middle.
+- **A slower leak.** The pipe drips about once every three seconds instead of once a second. The bucket still fills at the same pace.
+
 ## v0.8.0 (2026-10-06)
 
 - **Bo talks out loud.** With sound on, Bo speaks its lines using your browser's voice while the words type out, and finishes talking before it moves on. In the sound panel, Bo's voice can be Spoken, Beeps or Off.

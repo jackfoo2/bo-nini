@@ -173,7 +173,7 @@ function frame(t) {
   kitchenTick(dt);
   catTick(dt);
   // things that move in the room
-  if (apt.leak && !document.hidden) { dripT -= dt; if (dripT <= 0) { spawnDrip(); dripT = rand(0.7, 1.15); } }
+  if (apt.leak && !document.hidden) { dripT -= dt; if (dripT <= 0) { spawnDrip(); dripT = rand(2.3, 3.9); } }
   if (apt.radio && !RM.matches) { noteT -= dt; if (noteT <= 0) { spawnNote(); noteT = rand(1.1, 1.9); } }
   if (!RM.matches) clouds.forEach((c) => { c.x += dt * 3.2; if (c.x > 668) c.x = 470; c.p.setAttribute('transform', `translate(${c.x.toFixed(1)} ${c.y})`); });
   if (Math.abs(apt.tilt - picAngle) > 0.02) { picAngle += (apt.tilt - picAngle) * (1 - Math.pow(0.02, dt)); $('#pictureFrame').setAttribute('transform', `rotate(${picAngle.toFixed(2)} 343 158)`); }
@@ -320,8 +320,8 @@ function updateParticles(dt) {
       const surface = 469 - 23 * clamp(apt.bucket, 0, 1);
       if (p.y >= surface) {
         p.node.remove(); parts.splice(i, 1);
-        if (apt.bucket < 1) apt.bucket = Math.min(1, apt.bucket + 0.004);
-        else { apt.puddle = Math.min(1, apt.puddle + 0.006); renderPuddle(); splashAt(777 + rand(-10, 10), 452); }
+        if (apt.bucket < 1) apt.bucket = Math.min(1, apt.bucket + 0.012);
+        else { apt.puddle = Math.min(1, apt.puddle + 0.018); renderPuddle(); splashAt(777 + rand(-10, 10), 452); }
         renderBucket(); splashAt(p.x, surface); sfx.play('drip', 250);
         continue;
       }
