@@ -138,7 +138,7 @@ async function catJump(x, y, tok) {
   cat.dir = x >= cat.x ? 1 : -1;
   cat.jump = { x0: cat.x, y0: cat.y, x1: x, y1: y, u: 0, T: 0.42 + Math.abs(y - cat.y) / 520, h: Math.max(18, cat.y - y + 22) };
   while (cat.jump && !tok.c) await sleep(30);
-  if (cat.jump) { cat.x = x; cat.y = y; cat.jump = null; }
+  if (cat.jump) { cat.x = x; cat.y = y; cat.jump = null; } else catSound('thump', 150);
   cat.pose = 'sit';
   return !tok.c;
 }
@@ -159,9 +159,13 @@ async function catGoPerch(name, tok) {
   cat.perch = name; cat.pose = 'sit';
   return true;
 }
-async function catNap(ms, tok) { cat.pose = 'sleep'; const ok = await catWait(ms, tok); if (cat.pose === 'sleep') cat.pose = 'sit'; return ok; }
+async function catNap(ms, tok) { cat.pose = 'sleep'; const purrs = Math.random() < 0.35; if (purrs) sfx.loop('purr'); const ok = await catWait(ms, tok).finally(() => { if (purrs) sfx.stop('purr'); }); if (cat.pose === 'sleep') { cat.pose = 'sit'; if (ok && !cat.hold && Math.random() < 0.4) catSay(pick(['prrt', 'mrrp'])); } return ok; }
+function catSound(name, gap) {
+  const vb = svg.viewBox.baseVal, pan = vb && vb.width ? (cat.x - (vb.x + vb.width / 2)) / (vb.width / 2) : 0;
+  sfx.play(name, gap || 0, pan * 0.7);
+}
 function catSay(text) {
-  if (text) sfx.play('meow', 600);
+  if (text) catSound(/^m+r+[rpk]/i.test(text) ? (/k$/i.test(text) ? 'mrrk' : 'mrrp') : /^prr/i.test(text) ? 'mrrp' : 'meow', 500);
   if (!catG || RM.matches) return;
   const t = el('text', { x: 0, y: cat.pose === 'sleep' ? -30 : -46, class: 'cat-say' }, catG); t.textContent = text;
   setTimeout(() => t.remove(), 1500);
@@ -171,9 +175,10 @@ const CatName = () => apt.catName || 'The cat';
 
 /* ---------- what the cat does on its own ---------- */
 async function catEat(tok) {
+  if (cat.called) catSay(pick(['mrrp', 'mrow']));
   if (!(await catGoFloor(BOWL_X - 20, tok, 70))) return;
   cat.dir = 1; cat.eat = 5.5;
-  for (let k = 0; k < 6 && !tok.c; k++) { await catWait(800, tok); }
+  for (let k = 0; k < 6 && !tok.c; k++) { catSound('nibble'); await catWait(800, tok); }
   cat.eat = 0;
   if (tok.c) return;
   apt.catBowl = 0; renderBowl(); saveSoon();
@@ -185,7 +190,7 @@ async function catCounter(tok) {
   if (!(await catGoPerch('island', tok))) return;
   await catWait(rand(3500, 5500), tok); if (tok.c) return;
   if (cls.on) { glanceAt(cat.x, cat.y - 20, 1600); flashMood('annoyed', 1400); log(pick(['Cat. Counter. No.', 'Off the counter.', 'Not a cooking assistant.', 'Paws off the prep area.']), true); }
-  await catWait(700, tok);
+  await catWait(700, tok); catSay('mrrk');
   await catGoFloor(cat.x + 120, tok, 80);
 }
 // Bo is coming to sit: if the cat has the seat, it shifts over to the armrest
@@ -196,9 +201,9 @@ async function catArmrest(tok) {
   else if (!(await catGoPerch('armrest', tok))) return;
   cat.dir = -1; cat.pose = 'sit';
   await catWait(rand(2500, 4000), tok); if (tok.c) return;
-  if (bo.claim === 'chair') cat.pose = 'sleep';
+  if (bo.claim === 'chair') { cat.pose = 'sleep'; sfx.loop('purr'); }
   const end = now() + rand(15000, 30000);
-  while (now() < end && !tok.c && bo.claim === 'chair') await sleep(150);
+  try { while (now() < end && !tok.c && bo.claim === 'chair') await sleep(150); } finally { sfx.stop('purr'); }
   if (cat.pose === 'sleep') cat.pose = 'sit';
 }
 async function catFlee(tok) {
@@ -214,7 +219,7 @@ async function catBench(tok) {
     cat.swat = 0.3; await catWait(320, tok);
     cat.swat = 0.3; await catWait(400, tok); if (tok.c) return;
     apt.knocked = true; renderProject(); saveSoon();
-    puff(884, 488, 3);
+    puff(884, 488, 3); sfx.play('clatter', 0, (884 - (svg.viewBox.baseVal.x + svg.viewBox.baseVal.width / 2)) / (svg.viewBox.baseVal.width / 2) * 0.7);
     await catWait(500, tok);
     await catGoFloor(cat.x - 200, tok, 150);
     return;
@@ -225,10 +230,10 @@ async function catDust(tok) {
   const i = apt.dust.findIndex(() => true); if (i < 0) return;
   const d = apt.dust[i], side = cat.x < d.x ? -1 : 1;
   if (!(await catGoFloor(d.x + side * 24, tok, 60))) return;
-  cat.dir = -side;
+  cat.dir = -side; catSound('chatter');
   for (let k = 0; k < 3 && !tok.c; k++) {
     await catWait(rand(500, 900), tok); if (tok.c) return;
-    cat.swat = 0.3;
+    cat.swat = 0.3; catSound('tap');
     if (apt.dust[i]) { apt.dust[i].x = clamp(apt.dust[i].x - side * 7, 120, 900); renderDust(); }
   }
   await catWait(1200, tok);
@@ -237,12 +242,17 @@ async function catFollow(tok) {
   const side = bo.x > cat.x ? -1 : 1;
   if (!(await catGoFloor(bo.x + side * 46, tok))) return;
   cat.dir = -side; cat.pose = 'sit';
+  if (Math.random() < 0.5) catSay(pick(['mrrp', 'meow']));
   await catWait(rand(5000, 9000), tok);
 }
 async function catZoomies(tok) {
   const far = cat.x < 200 ? rand(600, 860) : rand(-420, 0);
-  if (!(await catGoFloor(far, tok, 190))) return;
-  if (!(await catWalk(cat.x + (far > 200 ? -260 : 260), tok, 170))) return;
+  catSound('chirp');
+  const paws = setInterval(() => { if (cat.target != null) catSound('patter'); }, 420);
+  try {
+    if (!(await catGoFloor(far, tok, 190))) return;
+    if (!(await catWalk(cat.x + (far > 200 ? -260 : 260), tok, 170))) return;
+  } finally { clearInterval(paws); }
   cat.pose = 'sit'; await catWait(1500, tok);
 }
 async function catWander(tok) {
@@ -252,10 +262,11 @@ async function catWander(tok) {
 async function catSun(tok) { if (!(await catGoFloor(rand(600, 660), tok))) return; await catNap(rand(20000, 40000), tok); }
 async function catChair(tok) { if (!(await catGoPerch('chair', tok))) return; await catNap(rand(20000, 45000), tok); }
 async function catBlanket(tok) { if (Math.abs(bo.x - 588) < 120) return; if (!(await catGoPerch('blanket', tok))) return; await catNap(rand(18000, 36000), tok); }
-async function catSill(tok) { if (Math.abs(bo.x - 588) < 120) return; if (!(await catGoPerch('sill', tok))) return; cat.dir = pick([1, -1]); await catWait(rand(9000, 18000), tok); if (!tok.c) await catDown(tok); }
+async function catSill(tok) { if (Math.abs(bo.x - 588) < 120) return; if (!(await catGoPerch('sill', tok))) return; cat.dir = pick([1, -1]); await catWait(rand(2500, 5000), tok); if (!tok.c && Math.random() < 0.5) catSound('chatter'); await catWait(rand(6000, 13000), tok); if (!tok.c) await catDown(tok); }
 async function catKitchen(tok) {
   if (!(await catGoFloor(BOWL_X - 30, tok))) return;
-  cat.dir = 1; await catWait(1500, tok); if (!tok.c && Math.random() < 0.6) catSay('mrrp');
+  cat.dir = 1; await catWait(1500, tok); if (!tok.c) catSay(apt.catBowl ? 'mrrp' : 'meow');
+  await catWait(2500, tok); if (!tok.c && !apt.catBowl && Math.random() < 0.6) catSay('meow');
   await catWait(rand(3000, 6000), tok);
 }
 function catChoose() {
@@ -276,6 +287,7 @@ async function catLoop() {
     if (!cls.on) cat.counterDone = false;
     const tok = makeTok(); cat.tok = tok;
     try { await catChoose()(tok); } catch (err) { console.error(err); }
+    if (!cat.hold && cat.pose !== 'sleep' && Math.random() < 0.32) catSay(pick(['meow', 'mrrp', 'mrow', 'meow']));
     if (!cat.hold) await sleep(rand(500, 1300));
   }
 }

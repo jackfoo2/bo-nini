@@ -2,6 +2,7 @@
 /* ================= sound: tiny synthesized effects, off until you turn them on ================= */
 const sfx = (() => {
   const KEY = 'bonini-sound', VKEY = 'bonini-volume', BKEY = 'bonini-blips', MKEY = 'bonini-voice', AKEY = 'bonini-ambience', WKEY = 'bonini-words', RKEY = 'bonini-music';
+  let dest = null;
   let ctx = null, master = null, on = false, nbuf = null, bbuf = null, vol = 0.65, blips = true, voiceMode = 'spoken', ambOn = true, words = true, amb = null, city = 0.5, musicOn = true;
   const loops = {}, last = {}, played = {};
   try {
@@ -19,7 +20,7 @@ const sfx = (() => {
       master = ctx.createGain(); master.gain.value = gainFor(vol);
       // a limiter at the end so nothing distorts at full volume
       const lim = ctx.createDynamicsCompressor(); lim.threshold.value = -6; lim.knee.value = 4; lim.ratio.value = 12; lim.attack.value = 0.003; lim.release.value = 0.25;
-      master.connect(lim); lim.connect(ctx.destination);
+      master.connect(lim); lim.connect(ctx.destination); dest = master;
     }
     if (ctx.state === 'suspended') ctx.resume().catch(() => {});
     return ctx;
@@ -140,12 +141,12 @@ const sfx = (() => {
   function tone(type, f0, f1, dur, vol, at) {
     const t = ctx.currentTime + (at || 0), o = ctx.createOscillator(), g = ctx.createGain();
     o.type = type; o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
-    env(g, t, 0.006, dur, vol); o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
+    env(g, t, 0.006, dur, vol); o.connect(g); g.connect(dest || master); o.start(t); o.stop(t + dur + 0.05);
   }
   function noise(dur, vol, type, freq, q, at) {
     const t = ctx.currentTime + (at || 0), s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
     s.buffer = noiseBuf(); f.type = type; f.frequency.value = freq; f.Q.value = q || 0.7;
-    env(g, t, 0.004, dur, vol); s.connect(f); f.connect(g); g.connect(master); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.05);
+    env(g, t, 0.004, dur, vol); s.connect(f); f.connect(g); g.connect(dest || master); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.05);
     return f;
   }
   const S = {
@@ -153,18 +154,36 @@ const sfx = (() => {
     drip() { tone('sine', 1150, 420, 0.1, 0.055); },
     chop() { noise(0.045, 0.3, 'highpass', 2400, 0.7); tone('triangle', 200, 90, 0.05, 0.12); },
     pin() { tone('triangle', 1000, 760, 0.05, 0.16); noise(0.025, 0.1, 'bandpass', 3200, 2); },
-    meow() {
-      const t = ctx.currentTime, o = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain();
-      o.type = 'sawtooth'; o.frequency.setValueAtTime(560, t); o.frequency.linearRampToValueAtTime(900, t + 0.1); o.frequency.linearRampToValueAtTime(620, t + 0.3);
-      f.type = 'bandpass'; f.frequency.setValueAtTime(1100, t); f.frequency.linearRampToValueAtTime(1600, t + 0.12); f.Q.value = 1.2;
-      env(g, t, 0.03, 0.3, 0.12); o.connect(f); f.connect(g); g.connect(master); o.start(t); o.stop(t + 0.4);
+    meow() {   // "mee-ow": rises, then falls as the mouth closes
+      const t = ctx.currentTime, k = 0.9 + Math.random() * 0.25, o = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain(), v = ctx.createOscillator(), vg = ctx.createGain();
+      o.type = 'sawtooth'; o.frequency.setValueAtTime(560 * k, t); o.frequency.linearRampToValueAtTime(880 * k, t + 0.16); o.frequency.linearRampToValueAtTime(820 * k, t + 0.3); o.frequency.linearRampToValueAtTime(500 * k, t + 0.55);
+      v.frequency.value = 6; vg.gain.value = 12; v.connect(vg); vg.connect(o.frequency);
+      f.type = 'bandpass'; f.Q.value = 1.4; f.frequency.setValueAtTime(1000, t); f.frequency.linearRampToValueAtTime(1700, t + 0.18); f.frequency.linearRampToValueAtTime(800, t + 0.55);
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.26, t + 0.06); g.gain.setValueAtTime(0.26, t + 0.38); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.6);
+      o.connect(f); f.connect(g); g.connect(dest || master); o.start(t); v.start(t); o.stop(t + 0.65); v.stop(t + 0.65);
     },
+    mrrp() {   // a short rolling trill
+      const t = ctx.currentTime, o = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain(), am = ctx.createOscillator(), ag = ctx.createGain();
+      o.type = 'sawtooth'; o.frequency.setValueAtTime(480, t); o.frequency.linearRampToValueAtTime(720, t + 0.2);
+      f.type = 'bandpass'; f.frequency.value = 1200; f.Q.value = 1.2;
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.17, t + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.24);
+      am.frequency.value = 32; ag.gain.value = 0.1; am.connect(ag); ag.connect(g.gain);
+      o.connect(f); f.connect(g); g.connect(dest || master); o.start(t); am.start(t); o.stop(t + 0.3); am.stop(t + 0.3);
+    },
+    mrrk() { tone('sawtooth', 460, 360, 0.16, 0.13); noise(0.1, 0.07, 'bandpass', 1400, 1.5); },
+    chirp() { tone('triangle', 1150, 1700, 0.11, 0.15); },
+    chatter() { for (let i = 0; i < 6; i++) tone('triangle', 1100 + Math.random() * 300, 900, 0.03, 0.1, i * 0.045); },
+    thump() { tone('sine', 140, 60, 0.08, 0.1); noise(0.05, 0.05, 'lowpass', 500, 0.7); },
+    tap() { noise(0.02, 0.05, 'lowpass', 900, 0.7); },
+    patter() { for (let i = 0; i < 6; i++) noise(0.015, 0.09, 'lowpass', 900, 0.7, i * 0.07 + Math.random() * 0.02); },
+    nibble() { for (let i = 0; i < 3; i++) noise(0.025, 0.11, 'bandpass', 2000 + Math.random() * 800, 1.5, i * 0.09 + Math.random() * 0.03); },
+    clatter() { [0, 0.11, 0.19, 0.26].forEach((at, i) => { noise(0.04, 0.3 / (i + 1), 'bandpass', 2600, 1.2, at); tone('triangle', 760 - i * 60, 500, 0.06, 0.15 / (i + 1), at); }); },
     purr() {
       const t = ctx.currentTime, s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain();
       s.buffer = noiseBuf(); s.loop = true; f.type = 'lowpass'; f.frequency.value = 260;
       g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.22, t + 0.25); g.gain.linearRampToValueAtTime(0.22, t + 1.3); g.gain.linearRampToValueAtTime(0.0001, t + 1.7);
       lfo.frequency.value = 24; lg.gain.value = 0.18; lfo.connect(lg); lg.connect(g.gain);
-      s.connect(f); f.connect(g); g.connect(master); s.start(t); lfo.start(t); s.stop(t + 1.8); lfo.stop(t + 1.8);
+      s.connect(f); f.connect(g); g.connect(dest || master); s.start(t); lfo.start(t); s.stop(t + 1.8); lfo.stop(t + 1.8);
     },
     kibble() { for (let i = 0; i < 10; i++) noise(0.018, 0.22, 'bandpass', 2400 + Math.random() * 1600, 3, i * 0.06 + Math.random() * 0.02); },
     crunch() { for (let i = 0; i < 5; i++) noise(0.05, 0.26, 'bandpass', 1500 + Math.random() * 900, 1, 0.1 + i * 0.12); },
@@ -180,6 +199,7 @@ const sfx = (() => {
     weld: { type: 'bandpass', freq: 1900, q: 1.0, vol: 0.045, crackle: true },
     water: { type: 'bandpass', freq: 950, q: 0.6, vol: 0.1 },
     simmer: { type: 'lowpass', freq: 520, q: 0.7, vol: 0.06 },
+    purr: { type: 'lowpass', freq: 240, q: 0.7, vol: 0.16, am: 24 },
   };
   function loop(name) {
     if (!on || loops[name] || !ensure() || ctx.state !== 'running') return;
@@ -188,6 +208,7 @@ const sfx = (() => {
     g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(L.vol, t + 0.15);
     let lfo = null;
     if (L.crackle) { lfo = ctx.createOscillator(); lfo.type = 'square'; lfo.frequency.value = 13; const lg = ctx.createGain(); lg.gain.value = L.vol * 0.6; lfo.connect(lg); lg.connect(g.gain); lfo.start(t); }
+    if (L.am) { lfo = ctx.createOscillator(); lfo.frequency.value = L.am; const lg = ctx.createGain(); lg.gain.value = L.vol * 0.8; lfo.connect(lg); lg.connect(g.gain); lfo.start(t); }
     s.connect(f); f.connect(g); g.connect(master); s.start(t);
     loops[name] = { s, g, lfo };
   }
@@ -195,12 +216,15 @@ const sfx = (() => {
     const l = loops[name]; if (!l) return; delete loops[name];
     try { const t = ctx.currentTime; l.g.gain.cancelScheduledValues(t); l.g.gain.setValueAtTime(Math.max(0.0001, l.g.gain.value), t); l.g.gain.linearRampToValueAtTime(0.0001, t + 0.15); l.s.stop(t + 0.2); if (l.lfo) l.lfo.stop(t + 0.2); } catch (e) { /* already stopped */ }
   }
-  function play(name, gap) {
+  function play(name, gap, pan) {
     if (!on || !S[name] || vol <= 0) return;
     if (name === 'blip' && voiceMode !== 'beeps') return;
     if (gap) { const n = performance.now(); if (n - (last[name] || 0) < gap) return; last[name] = n; }
     if (!ensure() || ctx.state !== 'running') return;
-    try { S[name](); played[name] = (played[name] || 0) + 1; } catch (e) { /* sound is optional */ }
+    try {
+      if (typeof pan === 'number' && ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = Math.max(-0.8, Math.min(0.8, pan)); p.connect(master); dest = p; }
+      S[name](); played[name] = (played[name] || 0) + 1;
+    } catch (e) { /* sound is optional */ } finally { dest = master; }
   }
   function sync() {
     const audible = on && vol > 0;
@@ -245,7 +269,7 @@ const sfx = (() => {
   // a background tab goes quiet
   document.addEventListener('visibilitychange', () => { if (!ctx) return; if (document.hidden) ctx.suspend().catch(() => {}); else if (on) ctx.resume().catch(() => {}); });
   return { play, loop, stop, set, sync, setVolume, setBlips, setVoiceMode, setWords, setAmbience, setMusic, scene, radioTick, radioBeat,
-    get music() { return musicOn; }, get radioPlaying() { return radio.playing; }, get radioNotes() { return radio.notes; }, get radioMood() { return radio.mood; },
+    get loopsOn() { return Object.keys(loops); }, get music() { return musicOn; }, get radioPlaying() { return radio.playing; }, get radioNotes() { return radio.notes; }, get radioMood() { return radio.mood; },
     _peak() { if (!ctx) return null; if (!this._an) { this._an = ctx.createAnalyser(); this._an.fftSize = 2048; master.connect(this._an); } const d = new Float32Array(this._an.fftSize); this._an.getFloatTimeDomainData(d); let p = 0; for (const x of d) p = Math.max(p, Math.abs(x)); return p; },
     get on() { return on; }, get volume() { return vol; }, get blips() { return blips; }, get voiceMode() { return voiceMode; }, get words() { return words; }, get ambience() { return !!amb; },
     get audible() { return on && vol > 0; }, get gain() { return master ? master.gain.value : null; }, played };

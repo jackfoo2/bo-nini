@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.2 (2026-10-07)
+
+- **The cat makes noise.** Meows now and then, a trill when it wakes, excited meows when Bo pours its food, and begging at an empty bowl. You'll also hear nibbling, soft thumps when it lands a jump, pattering paws during zoomies, chattering at dust bunnies and at the window, an indignant "mrrk" when it's shooed off the counter, and a clatter when it knocks the figurine off the bench. It purrs while it naps on the armrest next to Bo, and sometimes in other naps. Its sounds come from its side of the screen, and the meows show as text above it for anyone with sound off.
+
 ## v0.9.1 (2026-10-07)
 
 - **Quieter repair laser and drip.** Both are about a third as loud as before, with softer, lower pitches.
