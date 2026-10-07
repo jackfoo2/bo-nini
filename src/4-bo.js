@@ -120,6 +120,8 @@ function frame(t) {
   bo.bobY = bob;
   const grooving = apt.radio && !walking && !bo.welding && (bo.mode === 'free' || bo.mode === 'social') && !RM.matches;
   grooveT += dt;
+  const vb = svg.viewBox.baseVal; sfx.radioTick(apt.radio && !document.hidden, bo.talking, vb && vb.width ? (478 - (vb.x + vb.width / 2)) / (vb.width / 2) : 0, currentTod());
+  const beat = sfx.radioBeat(); if (beat != null) grooveT = beat * Math.PI / 6.2;
   const groove = grooving ? Math.sin(grooveT * 6.2) * 3 : 0;
   // mood params ease toward the current mood
   const mood = bo.mood === 'normal' && bo.energy < 0.2 ? 'low' : bo.mood;

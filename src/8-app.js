@@ -818,8 +818,10 @@ $('#sndVol').addEventListener('input', (e) => sfx.setVolume(Number(e.target.valu
 $$('#sndVoice button').forEach((b) => b.addEventListener('click', () => { sfx.setVoiceMode(b.dataset.voice); if (voiceActive()) speak("This is my voice."); }));
 $('#sndWords').addEventListener('change', (e) => sfx.setWords(e.target.checked));
 $('#sndAmb').addEventListener('change', (e) => sfx.setAmbience(e.target.checked));
+$('#sndMusic').addEventListener('change', (e) => sfx.setMusic(e.target.checked));
 document.addEventListener('keydown', (e) => {
-  if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey && !e.target.closest('input, textarea, select, [contenteditable="true"]')) { sfx.set(!sfx.on); }
+  const t = e.target, typing = t.closest('textarea, select, [contenteditable="true"]') || (t.tagName === 'INPUT' && !/^(checkbox|radio|range|button|submit|reset|color)$/i.test(t.type));
+  if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing) { sfx.set(!sfx.on); }
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { if (FLYS.some(([f]) => !f.hidden)) closeFlyouts(); else if (ctl) ctl.abort(); }
