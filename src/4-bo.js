@@ -358,7 +358,7 @@ function camTick(dt) {
   if (!cam.on && !cam.zoomed) { cam.fx = WX0 + WW / 2; cam.fy = 270; }
   const baseW = cam.on ? cam.vbw : WW, z = Math.min(cam.zoom, Math.max(1, baseW / 300));
   const w = baseW / z, h = 540 / z;
-  const tx = cam.focus === 'bo' ? bo.x : cam.focus.x, ty = cam.focus === 'bo' ? rootY() - 78 : cam.focus.y;
+  const tx = cam.focus === 'bo' ? bo.x : cam.focus.x, ty = cam.focus === 'bo' ? rootY() - (cam.zoom > 1.2 ? 100 : 78) : cam.focus.y;
   const k = 1 - Math.pow(0.12, dt);
   cam.fx += (tx - cam.fx) * k; cam.fy += (ty - cam.fy) * k; cam.x = cam.fx;
   const x0 = clamp(cam.fx - w / 2, WX0, WX1 - w), y0 = clamp(cam.fy - h / 2, 0, 540 - h);
@@ -376,15 +376,44 @@ function placeOverlays() {
   if (!showB && !showL) return;
   const a = stageXY(bo.x, rootY() + (-148 + bo.pose.sit * 9) * BS);
   if (!a) return;
-  if (showB && !bubbleHeld) placeAt(bubble, a, 8, 0.28);
-  if (showL && !logHeld) placeAt(logline, a, 6, 0);
+  const face = rootY() + (-118 + bo.pose.sit * 9) * BS;
+  const head = { r: stageXY(bo.x + 36, face), l: stageXY(bo.x - 36, face) };
+  const cards = cardRects();
+  if (showB && !bubbleHeld) placeAt(bubble, a, 8, 0.28, cards, head);
+  if (showL && !logHeld) placeAt(logline, a, 6, 0, cards, head);
 }
-function placeAt(node, a, gap, lean) {
-  const w = node.offsetWidth, h = node.offsetHeight;
-  const left = clamp(a.x - w * lean, w / 2 + 8, Math.max(w / 2 + 8, a.w - w / 2 - 8));
-  node.style.left = left.toFixed(1) + 'px';
-  node.style.top = clamp(a.y - gap, h + 8, Math.max(h + 8, a.h - 8)).toFixed(1) + 'px';
-  node.style.setProperty('--tail', clamp(a.x - (left - w / 2), 14, w - 14).toFixed(1) + 'px');
+// the caption cards on the stage; Bo's speech should never sit on top of them
+function cardRects() {
+  const sr = stage.getBoundingClientRect(), out = [];
+  ['#tourCard', '#recipe', '#classSub', '#lowerThird', '#skipCard'].forEach((sel) => {
+    const el = document.querySelector(sel); if (!el || el.hidden) return;
+    const r = el.getBoundingClientRect(); if (!r.width || !r.height) return;
+    out.push({ l: r.left - sr.left - 6, t: r.top - sr.top - 6, r: r.right - sr.left + 6, b: r.bottom - sr.top + 6 });
+  });
+  return out;
+}
+const overlaps = (b, cards) => cards.find((c) => b.l < c.r && b.r > c.l && b.t < c.b && b.b > c.t);
+function placeAt(node, a, gap, lean, cards, head) {
+  const w = node.offsetWidth, h = node.offsetHeight, box = (cx, by) => ({ l: cx - w / 2, r: cx + w / 2, t: by - h, b: by });
+  let cx = clamp(a.x - w * lean, w / 2 + 8, Math.max(w / 2 + 8, a.w - w / 2 - 8));
+  let by = clamp(a.y - gap, h + 8, Math.max(h + 8, a.h - 8));
+  let side = '', tailY = h / 2;
+  const blocker = cards && cards.length && overlaps(box(cx, by), cards);
+  if (blocker && head && head.r && head.l) {
+    // above the head is covered: try beside Bo's face, right side first, then left
+    const fy = head.r.y, byS = clamp(fy + h / 2, h + 8, Math.max(h + 8, a.h - 8));
+    const R = { cx: head.r.x + 10 + w / 2, by: byS }, L = { cx: head.l.x - 10 - w / 2, by: byS };
+    const fits = (p) => p.cx - w / 2 >= 8 && p.cx + w / 2 <= a.w - 8 && !overlaps(box(p.cx, p.by), cards);
+    if (fits(R)) { cx = R.cx; by = R.by; side = 'r'; }
+    else if (fits(L)) { cx = L.cx; by = L.by; side = 'l'; }
+    else by = clamp(blocker.b + h + 4, h + 8, Math.max(h + 8, a.h - 8));   // last resort: just under the card
+    if (side) tailY = clamp(fy - (by - h), 14, h - 14);
+  }
+  node.style.left = cx.toFixed(1) + 'px';
+  node.style.top = by.toFixed(1) + 'px';
+  node.dataset.side = side;
+  node.style.setProperty('--tail', clamp(a.x - (cx - w / 2), 14, w - 14).toFixed(1) + 'px');
+  node.style.setProperty('--tailY', tailY.toFixed(1) + 'px');
 }
 let bubbleTimer = 0, bubbleHeld = false, subHeld = false, logHeld = false, touchHold = null;
 const classSub = $('#classSub'), classSubText = $('#classSubText');

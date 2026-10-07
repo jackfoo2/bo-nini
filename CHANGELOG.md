@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.9.3 (2026-10-07)
+
+- **Bo's speech no longer covers the captions.** If a speech bubble would land on the tour card, the recipe card or another caption, it moves beside Bo's face with its tail pointing at Bo. If there's no room there, it drops just below the card.
+- **The tour card sits in the top-left corner,** out of the way of Bo, and the zoomed tour shots leave a little more room above Bo's head.
+
 ## v0.9.2 (2026-10-07)
 
 - **The cat makes noise.** Meows now and then, a trill when it wakes, excited meows when Bo pours its food, and begging at an empty bowl. You'll also hear nibbling, soft thumps when it lands a jump, pattering paws during zoomies, chattering at dust bunnies and at the window, an indignant "mrrk" when it's shooed off the counter, and a clatter when it knocks the figurine off the bench. It purrs while it naps on the armrest next to Bo, and sometimes in other naps. Its sounds come from its side of the screen, and the meows show as text above it for anyone with sound off.
