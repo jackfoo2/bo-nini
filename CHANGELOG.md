@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.1 (2026-10-07)
+
+- **Quieter repair laser and drip.** Both are about a third as loud as before, with softer, lower pitches.
+
 ## v0.9.0 (2026-10-07)
 
 - **The radio plays music.** Original lo-fi music that the demo composes as it plays: soft keys, bass, light drums and a wandering melody, built from simple chord progressions, so nobody owns it. It comes through a small-speaker filter with a little crackle, and the mood follows the time of day. It gets quieter while Bo talks, sits on the radio's side of the room, and Bo bobs in time to it. The sound panel has a Radio music switch.

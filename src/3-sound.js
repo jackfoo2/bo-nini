@@ -150,7 +150,7 @@ const sfx = (() => {
   }
   const S = {
     blip() { tone('square', 430 + Math.random() * 140, null, 0.04, 0.03); },
-    drip() { tone('sine', 1500, 480, 0.1, 0.16); },
+    drip() { tone('sine', 1150, 420, 0.1, 0.055); },
     chop() { noise(0.045, 0.3, 'highpass', 2400, 0.7); tone('triangle', 200, 90, 0.05, 0.12); },
     pin() { tone('triangle', 1000, 760, 0.05, 0.16); noise(0.025, 0.1, 'bandpass', 3200, 2); },
     meow() {
@@ -177,7 +177,7 @@ const sfx = (() => {
     flip() { const f = noise(0.3, 0.12, 'bandpass', 800, 1.5); f.frequency.exponentialRampToValueAtTime(2000, ctx.currentTime + 0.25); },
   };
   const LOOPS = {
-    weld: { type: 'bandpass', freq: 2600, q: 1.4, vol: 0.12, crackle: true },
+    weld: { type: 'bandpass', freq: 1900, q: 1.0, vol: 0.045, crackle: true },
     water: { type: 'bandpass', freq: 950, q: 0.6, vol: 0.1 },
     simmer: { type: 'lowpass', freq: 520, q: 0.7, vol: 0.06 },
   };
