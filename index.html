@@ -5548,6 +5548,31 @@ init();
   });
   g.querySelector('#pgAnyway').addEventListener('click', () => { g.remove(); });
 })();
+
+/* ---------- view counting (Cloudflare Web Analytics: free, no cookies, no fingerprinting) ----------
+   Never counts the owner: open the demo once with ?me on each of your browsers and that browser is never counted.
+   ?me=off undoes it. Paste the token from Cloudflare (Web Analytics > your site > the JS snippet's "token") below. */
+const CF_TOKEN = '';
+(function viewCounter() {
+  const q = location.search + '&' + location.hash;
+  let mine = false;
+  try {
+    if (/[?&#]me=off\b/.test(q)) { localStorage.removeItem('bonini-owner'); note('This browser counts as a visitor again.'); }
+    else if (/[?&#]me\b/.test(q)) { localStorage.setItem('bonini-owner', '1'); note("This browser is marked as yours: your views won't be counted."); }
+    mine = localStorage.getItem('bonini-owner') === '1';
+  } catch (e) { /* storage blocked: count normally */ }
+  if (mine || !CF_TOKEN) return;
+  const s = document.createElement('script');
+  s.defer = true; s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  s.setAttribute('data-cf-beacon', JSON.stringify({ token: CF_TOKEN }));
+  document.head.appendChild(s);
+  function note(msg) {
+    const n = document.createElement('div');
+    n.textContent = msg;
+    n.style.cssText = 'position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:99998;padding:9px 14px;border-radius:9px;background:#1d1f24;color:#ece9e2;font:600 14px system-ui,sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.4)';
+    document.body.appendChild(n); setTimeout(() => n.remove(), 4500);
+  }
+})();
 })();
 </script>
 </body>
