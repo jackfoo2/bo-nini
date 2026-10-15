@@ -497,6 +497,7 @@ async function say(text, hold) {
   if (!text) return;
   if (clip.on) capYou.textContent = '';
   const gen = sayGen + 1;
+  sfx.beepUnrecorded = voiceActive() && !recordedFile(text); // fixed lines play Bo's recorded voice; changing lines beep
   const spoken = speak(text);
   const prev = await typeOut(text);
   if (gen !== sayGen) return;

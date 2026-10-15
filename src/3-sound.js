@@ -3,6 +3,7 @@
 const sfx = (() => {
   const KEY = 'bonini-sound', VKEY = 'bonini-volume', BKEY = 'bonini-blips', MKEY = 'bonini-voice', AKEY = 'bonini-ambience', WKEY = 'bonini-words', RKEY = 'bonini-music';
   let dest = null;
+  let beepUnrecorded = false; // Spoken mode: a line without a recording is carried by Bo's beeps instead
   let ctx = null, master = null, on = false, nbuf = null, bbuf = null, vol = 0.65, blips = true, voiceMode = 'spoken', ambOn = true, words = true, amb = null, city = 0.5, musicOn = true;
   const loops = {}, last = {}, played = {};
   try {
@@ -218,7 +219,7 @@ const sfx = (() => {
   }
   function play(name, gap, pan) {
     if (!on || !S[name] || vol <= 0) return;
-    if (name === 'blip' && voiceMode !== 'beeps') return;
+    if (name === 'blip' && voiceMode !== 'beeps' && !(voiceMode === 'spoken' && beepUnrecorded)) return;
     if (gap) { const n = performance.now(); if (n - (last[name] || 0) < gap) return; last[name] = n; }
     if (!ensure() || ctx.state !== 'running') return;
     try {
@@ -271,6 +272,7 @@ const sfx = (() => {
   return { play, loop, stop, set, sync, setVolume, setBlips, setVoiceMode, setWords, setAmbience, setMusic, scene, radioTick, radioBeat,
     get loopsOn() { return Object.keys(loops); }, get music() { return musicOn; }, get radioPlaying() { return radio.playing; }, get radioNotes() { return radio.notes; }, get radioMood() { return radio.mood; },
     _peak() { if (!ctx) return null; if (!this._an) { this._an = ctx.createAnalyser(); this._an.fftSize = 2048; master.connect(this._an); } const d = new Float32Array(this._an.fftSize); this._an.getFloatTimeDomainData(d); let p = 0; for (const x of d) p = Math.max(p, Math.abs(x)); return p; },
+    set beepUnrecorded(v) { beepUnrecorded = !!v; },
     get on() { return on; }, get volume() { return vol; }, get blips() { return blips; }, get voiceMode() { return voiceMode; }, get words() { return words; }, get ambience() { return !!amb; },
     get audible() { return on && vol > 0; }, get gain() { return master ? master.gain.value : null; }, played };
 })();

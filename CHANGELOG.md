@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.10.0
+- Bo has a real voice: all 246 of its fixed lines (tour, chores, cooking classes, scripted replies) are recorded in a
+  gender-neutral robot voice: Kokoro text-to-speech (Apache-2.0), re-synthesized at one steady pitch with lowered
+  resonances and a small built-in-speaker sound. Recordings live in voice/ (about 4.7 MB) and load one line at a
+  time, only when Bo says it. Lines with something filled in (the cat's name, the time) beep instead, so there is
+  never a second, human-sounding voice. The Spoken setting no longer depends on the browser's speech support.
+- Phones get their own screen: a 40-second vertical clip of Bo, "Join the waitlist", "Send me the link for later"
+  (share menu or email), and "Try it here anyway". Add ?full to the address to skip it.
+
 ## v0.9.3 (2026-10-07)
 
 - **Bo's speech no longer covers the captions.** If a speech bubble would land on the tour card, the recipe card or another caption, it moves beside Bo's face with its tail pointing at Bo. If there's no room there, it drops just below the card.

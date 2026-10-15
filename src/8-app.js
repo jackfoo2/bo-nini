@@ -856,7 +856,12 @@ $$('#brainBtns button').forEach((b) => b.addEventListener('click', () => {
   brain.mode = m; renderBrainUI();
 }));
 
-/* ---------- voice (browser speech, off by default) ---------- */
+/* ---------- Bo's voice: recordings of every fixed line (voice/lines.json maps each line to its file) ---------- */
+const recVoice = { map: null, loading: null, audio: null };
+function loadVoiceMap() { return recVoice.loading || (recVoice.loading = fetch('voice/lines.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({})).then((m) => (recVoice.map = m))); }
+loadVoiceMap();
+function recordedFile(t) { return (recVoice.map && t && recVoice.map[t]) || null; }
+/* ---------- (the old browser-speech voice, kept only for its settings plumbing) ---------- */
 const voice = { on: false, v: null, pitch: 1, rate: 0.96, ok: 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function' };
 function pickVoice() {
   if (!voice.ok) return;
@@ -874,35 +879,33 @@ function pickVoice() {
   voice.v = vs[0] || null; voice.pitch = 0.9; voice.rate = 0.96;
 }
 // Bo talks out loud when sound is on and the voice is set to Spoken; resolves when Bo is done talking
-function voiceActive() { return voice.ok && !voice.broken && sfx.audible && sfx.voiceMode === 'spoken'; }
+function voiceActive() { return sfx.audible && sfx.voiceMode === 'spoken'; }
 function wordsShown() { return sfx.words || !voiceActive(); }
 function speak(t) {
   if (!voiceActive() || !t) return Promise.resolve();
+  const file = recordedFile(t);
+  if (!file) return Promise.resolve(); // a line with something filled in (a name, the time): Bo's beeps carry it
   return new Promise((res) => {
     let done = false;
     const finish = () => { if (!done) { done = true; clearTimeout(timer); res(); } };
-    const timer = setTimeout(finish, 1200 + t.length * 72);
+    const timer = setTimeout(finish, 2500 + t.length * 95);
     try {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(t.replace(/[\u201c\u201d]/g, '"'));
-      if (voice.v) u.voice = voice.v; u.pitch = voice.pitch; u.rate = voice.rate; u.volume = Math.min(1, sfx.volume * 1.25);
-      u.onend = finish;
-      // if this browser can't actually speak, fall back to showing Bo's words
-      u.onerror = (e) => { if (e && e.error && !/interrupt|cancel/i.test(e.error)) { voice.broken = true; sfx.sync(); } finish(); };
-      window.speechSynthesis.speak(u);
+      if (recVoice.audio) recVoice.audio.pause();
+      const a = new Audio('voice/' + file); recVoice.audio = a;
+      a.volume = Math.min(1, sfx.volume * 1.1);
+      a.onended = finish; a.onerror = finish;
+      a.play().catch(finish);
     } catch (e) { finish(); }
   });
 }
 function onSoundChange() {
   voice.on = voiceActive();
-  if (!voice.on && voice.ok) { try { window.speechSynthesis.cancel(); } catch (e) { /* speech unavailable */ } }
+  if (!voice.on && recVoice.audio) { try { recVoice.audio.pause(); } catch (e) { /* nothing playing */ } }
   if (typeof voiceBtn !== 'undefined') voiceBtn.setAttribute('aria-pressed', String(sfx.voiceMode === 'spoken'));
   if (!wordsShown()) { bubble.classList.remove('show'); classSub.hidden = true; }
 }
 const voiceBtn = $('#voiceBtn');
-if (!voice.ok) { const sb = $('#sndVoice button[data-voice="spoken"]'); sb.disabled = true; sb.title = "This browser can't speak."; }
-if (voice.ok) { pickVoice(); if (window.speechSynthesis.addEventListener) window.speechSynthesis.addEventListener('voiceschanged', pickVoice); }
-else { voiceBtn.disabled = true; voiceBtn.title = "This browser can't speak."; }
+// recordings play in every browser, so the Spoken voice is always available
 voiceBtn.addEventListener('click', () => {
   sfx.setVoiceMode(sfx.voiceMode === 'spoken' ? 'beeps' : 'spoken');
   if (sfx.voiceMode === 'spoken' && !sfx.on) sfx.set(true);
@@ -1026,3 +1029,38 @@ function init() {
   initBrain();
 }
 init();
+
+/* ---------- phones: a short clip of Bo, the waitlist, and a way to get the link onto a computer ---------- */
+(function phoneScreen() {
+  const forced = /(^|[?&#])full\b/i.test(location.search.slice(1) + '&' + location.hash.slice(1));
+  const phone = matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 820;
+  if (!phone || forced) return;
+  const link = 'https://jackfoo2.github.io/bo-nini/';
+  const css = document.createElement('style');
+  css.textContent = `
+#phoneGate { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; gap: 11px; overflow-y: auto;
+  padding: max(18px, env(safe-area-inset-top)) 20px max(22px, env(safe-area-inset-bottom)); background: #17181c; color: #ece9e2;
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center; }
+#phoneGate video { height: min(46vh, 430px); width: auto; max-width: 78vw; aspect-ratio: 9 / 16; border-radius: 14px; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,.5); object-fit: cover; }
+#phoneGate h1 { margin: 2px 0 0; font-size: 22px; letter-spacing: .01em; }
+#phoneGate p { margin: 0; max-width: 340px; color: #b9b5ad; }
+#phoneGate .b { display: block; width: min(86vw, 320px); padding: 13px 16px; border: 0; border-radius: 10px; font: 600 16px system-ui, sans-serif; text-decoration: none; cursor: pointer; }
+#phoneGate .primary { background: #f5a623; color: #1d1405; }
+#phoneGate .second { background: #2c2e35; color: #ece9e2; }
+#phoneGate .plain { background: none; color: #8f8b84; text-decoration: underline; padding: 6px; width: auto; font-weight: 500; }`;
+  document.head.appendChild(css);
+  const g = document.createElement('div'); g.id = 'phoneGate';
+  g.innerHTML = `
+<video src="media/bo-phone-clip.mp4" poster="media/bo-phone-poster.jpg" autoplay muted loop playsinline></video>
+<h1>Bo lives on your desktop</h1>
+<p>This demo is built for a computer screen. Open it there to meet Bo for real.</p>
+<a class="b primary" href="https://bonini.biz">Join the waitlist</a>
+<button class="b second" type="button" id="pgShare">Send me the link for later</button>
+<button class="b plain" type="button" id="pgAnyway">Try it here anyway</button>`;
+  document.body.appendChild(g);
+  g.querySelector('#pgShare').addEventListener('click', async () => {
+    if (navigator.share) { try { await navigator.share({ title: 'Bo Nini demo', text: 'Open this on a computer to meet Bo.', url: link }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+    location.href = 'mailto:?subject=' + encodeURIComponent('Bo Nini demo (open on a computer)') + '&body=' + encodeURIComponent(link);
+  });
+  g.querySelector('#pgAnyway').addEventListener('click', () => { g.remove(); });
+})();
