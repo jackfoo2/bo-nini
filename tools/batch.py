@@ -12,7 +12,7 @@ def spoken_form(t):  # what the voice says; the text on screen is unchanged
     s = re.sub(r'\b1 tsp\b', 'one teaspoon of', s); s = re.sub(r'\b(\d+) tsp\b', r'\1 teaspoons of', s)
     s = re.sub(r'\bAPI\b', 'A P I', s); s = re.sub(r'\bPDF\b', 'P D F', s); s = re.sub(r'\bAI\b', 'A I', s); s = re.sub(r'\bOK\b', 'okay', s)
     return s
-lines = json.load(open('lines.json'))
+lines = json.load(open('lines2.json'))  # from tools/find-lines.mjs
 os.makedirs('/home/claude/bo-nini/voice', exist_ok=True)
 manifest = {}; t0 = time.time()
 for i, t in enumerate(lines):
