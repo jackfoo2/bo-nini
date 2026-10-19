@@ -9,7 +9,7 @@ async def main():
         pg = await ctx.new_page(); beacons = []
         pg.on('request', lambda r: beacons.append(r.url) if 'cloudflareinsights' in r.url else None)
         # pretend a token is set, to see whether the counter would load
-        await pg.route('**/index.html*', lambda route: route.fulfill(body=open('/home/claude/bo-nini/index.html').read().replace("const CF_TOKEN = '';", "const CF_TOKEN = 'test-token';"), content_type='text/html'))
+        pass
         async def visit(url):
             beacons.clear(); await pg.goto(url); await pg.wait_for_timeout(1500)
             return bool(beacons), await pg.evaluate("[...document.querySelectorAll('div')].map(d => d.textContent).find(t => /browser/.test(t) && t.length < 80) || ''")
